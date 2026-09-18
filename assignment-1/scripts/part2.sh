@@ -23,10 +23,10 @@ do
     make clean -C "$ROOT_DIR"
     make CXXFLAGS="-std=c++17 -$opt" -C "$ROOT_DIR"
 
+    rm -f "$RESULTS/prefix_sum_$opt.txt"
     for n in 1000000 10000000 100000000
     do
         echo "n = $n | optimization=-$opt"
-        rm -f "$RESULTS/prefix_sum_$opt.txt"
         $EXEC prefix_sum $n 10 \
             >> "$RESULTS/prefix_sum_$opt.txt"
         echo "finished!"

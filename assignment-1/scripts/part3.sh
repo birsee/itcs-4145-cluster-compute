@@ -21,10 +21,10 @@ make clean -C "$ROOT_DIR"
 make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
 
 echo "running matrix multiplication..."
+rm -f "$RESULTS/matmul.txt"
 for n in 256 512 1024
 do
     echo "n = $n"
-    rm -f "$RESULTS/matmul.txt"
     $EXEC matmul $n $n $n 10 \
         >> "$RESULTS/matmul.txt"
     echo "finished!"

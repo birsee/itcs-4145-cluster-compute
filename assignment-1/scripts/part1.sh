@@ -21,10 +21,10 @@ make clean -C "$ROOT_DIR"
 make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
 
 echo "running array max..."
+    rm -f "$RESULTS/array_max.txt"
 for n in 1000000 10000000 100000000
 do
     echo "n = $n"
-    rm -f "$RESULTS/array_max.txt"
     $EXEC array_max $n 10 \
         >> "$RESULTS/array_max.txt"
     echo "finished!"

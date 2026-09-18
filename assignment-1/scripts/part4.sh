@@ -21,10 +21,10 @@ make clean -C "$ROOT_DIR"
 make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
 
 echo "running merge sort..."
+rm -f "$RESULTS/merge_sort.txt"
 for n in 1000000 10000000 100000000
 do
     echo "n = $n"
-    rm -f "$RESULTS/merge_sort.txt"
     $EXEC merge_sort $n 10 \
         >> "$RESULTS/merge_sort.txt"
     echo "finished!"
