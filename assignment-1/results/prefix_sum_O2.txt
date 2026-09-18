@@ -1,19 +1,57 @@
 Starting profiling...
 Profiling operation prefix_sum
 Integer: 
-MIN: 57745409 ns | 0.0577454 s
-MAX: 58145832 ns | 0.0581458 s
-AVG: 58035069 ns | 0.0580351 s
-MED: 58077131 ns | 0.0580771 s
-TOTAL: 580350695 ns | 0.580351 s
+MIN: 352671 ns | 0.000352671 s
+MAX: 367504 ns | 0.000367504 s
+AVG: 355370 ns | 0.00035537 s
+MED: 352851 ns | 0.000352851 s
+TOTAL: 3553707 ns | 0.00355371 s
 
-RATE: 1.7231e+09
+RATE: 2.81397e+09
 Doubles: 
-MIN: 134054269 ns | 0.134054 s
-MAX: 137314721 ns | 0.137315 s
-AVG: 135900026 ns | 0.1359 s
-MED: 136703150 ns | 0.136703 s
-TOTAL: 1359000261 ns | 1.359 s
+MIN: 1087598 ns | 0.0010876 s
+MAX: 1091673 ns | 0.00109167 s
+AVG: 1088457 ns | 0.00108846 s
+MED: 1087861 ns | 0.00108786 s
+TOTAL: 10884579 ns | 0.0108846 s
 
-RATE: 7.31452e+08
+RATE: 9.18359e+08
+dirty compiler hack, don't look at this...3.3e+07
+Starting profiling...
+Profiling operation prefix_sum
+Integer: 
+MIN: 5077500 ns | 0.0050775 s
+MAX: 5102802 ns | 0.0051028 s
+AVG: 5088359 ns | 0.00508836 s
+MED: 5086808 ns | 0.00508681 s
+TOTAL: 50883593 ns | 0.0508836 s
+
+RATE: 1.96527e+09
+Doubles: 
+MIN: 12806538 ns | 0.0128065 s
+MAX: 13101823 ns | 0.0131018 s
+AVG: 12981915 ns | 0.0129819 s
+MED: 13011288 ns | 0.0130113 s
+TOTAL: 129819154 ns | 0.129819 s
+
+RATE: 7.71431e+08
+dirty compiler hack, don't look at this...3.3e+08
+Starting profiling...
+Profiling operation prefix_sum
+Integer: 
+MIN: 57937908 ns | 0.0579379 s
+MAX: 58161837 ns | 0.0581618 s
+AVG: 58064286 ns | 0.0580643 s
+MED: 58079651 ns | 0.0580797 s
+TOTAL: 580642861 ns | 0.580643 s
+
+RATE: 1.72223e+09
+Doubles: 
+MIN: 133473976 ns | 0.133474 s
+MAX: 136927079 ns | 0.136927 s
+AVG: 135530175 ns | 0.13553 s
+MED: 135986622 ns | 0.135987 s
+TOTAL: 1355301755 ns | 1.3553 s
+
+RATE: 7.35876e+08
 dirty compiler hack, don't look at this...3.3e+09

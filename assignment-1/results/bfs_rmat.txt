@@ -85,3 +85,177 @@ MIN: 6.32124e+07
 MEDIAN: 6.88004e+07
 MAX: 7.53381e+07
 dirty compiler hack, don't look at this...0
+Starting profiling...
+Profiling operation bfs
+Results for starting from node 572998
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.2586e+07
+Results for starting from node 803940
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57954e+07
+Results for starting from node 442417
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56569e+07
+Results for starting from node 265001
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.51126e+07
+Results for starting from node 451940
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.58182e+07
+Results for starting from node 275846
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.49849e+07
+Results for starting from node 704493
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57039e+07
+Results for starting from node 732572
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56949e+07
+Results for starting from node 829143
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57575e+07
+Results for starting from node 46367
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57887e+07
+Results for starting from node 529602
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.5806e+07
+Results for starting from node 524551
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.58045e+07
+Results for starting from node 1025317
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.58331e+07
+Results for starting from node 1018952
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57846e+07
+Results for starting from node 644128
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.58424e+07
+Results for starting from node 896930
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57299e+07
+Totals:
+MIN: 7.2586e+07
+MEDIAN: 7.57846e+07
+MAX: 7.58424e+07
+dirty compiler hack, don't look at this...0
+Starting profiling...
+Profiling operation bfs
+Results for starting from node 572998
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.25177e+07
+Results for starting from node 803940
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57776e+07
+Results for starting from node 442417
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.55947e+07
+Results for starting from node 265001
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.49525e+07
+Results for starting from node 451940
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56919e+07
+Results for starting from node 275846
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.49298e+07
+Results for starting from node 704493
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.55907e+07
+Results for starting from node 732572
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56508e+07
+Results for starting from node 829143
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56298e+07
+Results for starting from node 46367
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57105e+07
+Results for starting from node 529602
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57052e+07
+Results for starting from node 524551
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56636e+07
+Results for starting from node 1025317
+LEVELS: 6
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.56945e+07
+Results for starting from node 1018952
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57096e+07
+Results for starting from node 644128
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57924e+07
+Results for starting from node 896930
+LEVELS: 7
+% REACHED: 1
+EDGES INSPECTED: 16777088
+TEPS: 7.57434e+07
+Totals:
+MIN: 7.25177e+07
+MEDIAN: 7.56919e+07
+MAX: 7.57924e+07
+dirty compiler hack, don't look at this...0
