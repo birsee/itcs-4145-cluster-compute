@@ -2,12 +2,12 @@ ifeq ($(OS),Windows_NT)
     FIX_PATH = $(subst /,\,$1)
     MKDIR= if not exist "$(call FIX_PATH,$1)" mkdir "$(call FIX_PATH,$1)"
     RMDIR = rmdir /Q /S
-    TARGET = my_project_exec.exe
+    TARGET = final.exe
 else
     FIX_PATH = $1
     MKDIR = mkdir -p $1
     RMDIR = rm -rf $1
-    TARGET = my_project_exec
+    TARGET = final
 endif
 
 CXX = g++

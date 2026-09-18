@@ -247,7 +247,6 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
     return result;
 }
 
-
 // the actual program
 int main() {
     iostream::sync_with_stdio(false);
