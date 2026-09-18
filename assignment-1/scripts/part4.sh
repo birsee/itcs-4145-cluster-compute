@@ -24,6 +24,7 @@ echo "running merge sort..."
 for n in 1000000 10000000 100000000
 do
     echo "n = $n"
+    rm -f "$RESULTS/merge_sort.txt"
     $EXEC merge_sort $n 10 \
         > "$RESULTS/merge_sort.txt"
     echo "finished!"

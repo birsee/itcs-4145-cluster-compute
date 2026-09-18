@@ -24,8 +24,9 @@ echo "running array max..."
 for n in 1000000 10000000 100000000
 do
     echo "n = $n"
+    rm -f "$RESULTS/array_max.txt"
     $EXEC array_max $n 10 \
-        > "$RESULTS/array_max.txt"
+        >> "$RESULTS/array_max.txt"
     echo "finished!"
 done
 echo "finished array max!"
