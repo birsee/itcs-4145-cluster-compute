@@ -37,6 +37,4 @@ echo "rmat graph"
 $EXEC bfs "$RMAT_GRAPH" 16 > "$RESULTS/bfs_rmat.txt"
 echo "rmat graph finished!"
 
-
-
 echo "finished BFS!"
