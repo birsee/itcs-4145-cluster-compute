@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#SBATCH --partition=Orion
+#SBATCH --job-name=itsc-4145-assignment-1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=1:00:00
+#SBATCH --mem=128G
+
 set -e
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
