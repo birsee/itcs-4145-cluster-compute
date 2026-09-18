@@ -69,7 +69,7 @@ struct ProfilingResult {
 };
 template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup, Kernel&& kernel, int iterations) {
     // run once as warm-up
-    kernel();
+    time(setup, kernel);
     
     double avg = 0, total = 0, min = numeric_limits<double>::max(), max = numeric_limits<double>::min();
     vector<double> runTimes(iterations);
@@ -134,6 +134,7 @@ template <typename T> void fillArray(vector<T>& a, ArrayType type) {
 
 // hack to make sure the compiler doesnt optimize away everything.
 static double compilerHack = 0.0;
+
 
 // part 1
 template <typename T> T arrayMax(const vector<T>& a) {
@@ -297,7 +298,10 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     cout << name << ": " << results << endl << "FLOPS: " << rate << endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
-    vector<double> a(n * n), b(n * n), c(n * n);
+    vector<double> a(m*k);
+    vector<double> b(k*n);
+    vector<double> c(m*n);
+    // fill with random garbage
     fillArray(a, ArrayType::Random);
     fillArray(b, ArrayType::Random);
 

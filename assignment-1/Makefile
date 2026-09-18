@@ -2,16 +2,16 @@ ifeq ($(OS),Windows_NT)
     FIX_PATH = $(subst /,\,$1)
     MKDIR= if not exist "$(call FIX_PATH,$1)" mkdir "$(call FIX_PATH,$1)"
     RMDIR = rmdir /Q /S
-    TARGET = final.exe
+    TARGET = main.exe
 else
     FIX_PATH = $1
     MKDIR = mkdir -p $1
     RMDIR = rm -rf $1
-    TARGET = final
+    TARGET = main
 endif
 
 CXX = g++
-CXXFLAGS = -std=c++17 -O3 -Wall -Wextra -Iinclude
+CXXFLAGS ?= -std=c++17 -O3
 
 SRC_DIR = src
 OBJ_DIR = obj
