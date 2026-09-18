@@ -363,8 +363,8 @@ void profileMergeSort(int n, int i, ArrayType type) {
         sort(stdSortVec.begin(), stdSortVec.end());
         compilerHack += stdSortVec.back();
     }, i);
-    cout << "std::sort: " << stdSortResult << endl;
-    cout << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl;
+    cout << "std::sort: " << endl << stdSortResult 
+         << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl;
 
     vector<int> reuseVec(stdSortVec);
     ProfilingResult reuseResult = profile([](){}, [&](){
@@ -372,16 +372,16 @@ void profileMergeSort(int n, int i, ArrayType type) {
         mergeSortReuse(reuseVec, temp, 0, n - 1);
         compilerHack += reuseVec.back();
     }, i);
-    cout << "Reuse: " << reuseResult << endl;
-    cout << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
+    cout << "Reuse: " << endl << reuseResult 
+         << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
 
     vector<int> allocateVec(stdSortVec);
     ProfilingResult allocateResult = profile([](){}, [&](){
         mergeSortAllocate(allocateVec, 0, n - 1);
         compilerHack += allocateVec.back();
     }, i);
-    cout << "Allocate: " << allocateResult << endl;
-    cout << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
+    cout << "Allocate: " << endl << allocateResult 
+         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
@@ -398,7 +398,7 @@ void profileMergeSort(int n, int i, ArrayType type) {
 }
 
 void profileMergeSortSet(int n, int i) {
-    vector<ArrayType> types = {ArrayType::Random, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Same};
+    vector<ArrayType> types = {ArrayType::Same, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Random};
     for (size_t t = 0; t < types.size(); t++) {
         ArrayType type = types[t];
         cout << arrayTypeName(type) << ": " << endl;
