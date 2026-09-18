@@ -17,12 +17,15 @@ RESULTS="$ROOT_DIR/results"
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
+make clean -C "$ROOT_DIR"
+make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
+
 echo "running array max..."
 for n in 1000000 10000000 100000000
 do
     echo "n = $n"
     $EXEC array_max $n 10 \
-        >> "$RESULTS/array_max.txt"
+        > "$RESULTS/array_max.txt"
     echo "finished!"
 done
 echo "finished array max!"

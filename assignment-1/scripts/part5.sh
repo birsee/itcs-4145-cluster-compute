@@ -17,6 +17,9 @@ RESULTS="$ROOT_DIR/results"
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
+make clean -C "$ROOT_DIR"
+make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
+
 echo "running BFS..."
 
 # generate the graphs if they don't exist
@@ -28,13 +31,13 @@ done
 
 # run the actual operation
 echo "er graph"
-$EXEC bfs ER_GRAPH 16 \
-    >> "$RESULTS/bfs_er.txt"
+$EXEC bfs "$ER_GRAPH" 16 > "$RESULTS/bfs_er.txt"
 echo "er graph finished!"
 
 echo "rmat graph"
-$EXEC bfs RMAT_GRAPH 16 \
-    >> "$RESULTS/bfs_rmat.txt"
+$EXEC bfs "$RMAT_GRAPH" 16 > "$RESULTS/bfs_rmat.txt"
 echo "rmat graph finished!"
+
+
 
 echo "finished BFS!"

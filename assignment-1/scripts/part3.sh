@@ -17,18 +17,21 @@ RESULTS="$ROOT_DIR/results"
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
+make clean -C "$ROOT_DIR"
+make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
+
 echo "running matrix multiplication..."
 for n in 256 512 1024
 do
     echo "n = $n"
     $EXEC matmul $n $n $n 10 \
-        >> "$RESULTS/matmul.txt"
+        > "$RESULTS/matmul.txt"
     echo "finished!"
 done
 
 echo "m = 256 | k = 300 | n = 512"
 $EXEC matmul 256 300 512 10 \
-    >> "$RESULTS/matmul_irregular.txt"
+    > "$RESULTS/matmul_irregular.txt"
 echo "finished!"
 
 echo "finished matrix multiplication!"

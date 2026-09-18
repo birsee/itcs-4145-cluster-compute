@@ -203,14 +203,15 @@ void profileArrayMaxSet(int n, int i) {
     // doubles
     cout << "--- Double ---" << endl;
     cout << "Sorted: " << endl << profileArrayMax(n, i, false, false, ArrayType::Sorted) << endl;
-    cout << "Sorted, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Sorted) << endl;
+    cout << "Sorted, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Sorted) << endl;
 
     cout << "Reverse-sorted: " << endl << profileArrayMax(n, i, false, false, ArrayType::Reverse) << endl;
-    cout << "Reverse-sorted, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Reverse) << endl;
+    cout << "Reverse-sorted, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Reverse) << endl;
 
     cout << "Randomized: " << endl << profileArrayMax(n, i, false, false, ArrayType::Random) << endl;
-    cout << "Randomized, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Random) << endl;
+    cout << "Randomized, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Random) << endl;
 }
+
 void profileArrayMaxBandwidth(int i) {
     for (long long bytes = 2LL * 1024; bytes <= 256LL * 1024 * 1024; bytes *= 2) {
         long long n = bytes / static_cast<long long>(sizeof(double));
@@ -440,10 +441,10 @@ void profileMergeSortSet(int n, int i) {
 
 // part 5
 struct CSRGraph {
-    int vertexCount;
-    int edgeCount;
-    vector<int> vertexToAdjacenceniesStart;
-    vector<int> adjacencies;
+    long vertexCount;
+    long edgeCount;
+    vector<long> vertexToAdjacenceniesStart;
+    vector<long> adjacencies;
 };
 // lots of google-fu here. i barely understand this at all
 CSRGraph loadFromMTX(const string& filename) {
@@ -462,7 +463,7 @@ CSRGraph loadFromMTX(const string& filename) {
         break;
     }
     
-    long long numRows, numCols, numLines;
+    long numRows, numCols, numLines;
     {
         istringstream iss(line);
         iss >> numRows >> numCols >> numLines;
@@ -471,16 +472,16 @@ CSRGraph loadFromMTX(const string& filename) {
     CSRGraph graph;
     graph.vertexCount = numRows;
  
-    struct Edge { int src, dst; };
+    struct Edge { long src, dst; };
     vector<Edge> tempEdges;
     tempEdges.reserve(numLines * 2);
  
-    for (long long i = 0; i < numLines; i++) {
-        long long u, v;
+    for (long i = 0; i < numLines; i++) {
+        long u, v;
         if (!(file >> u >> v)) break;
         file.ignore(numeric_limits<streamsize>::max(), '\n');
-        int srcNode = static_cast<int>(u - 1);
-        int destNode = static_cast<int>(v - 1);
+        int srcNode = static_cast<long>(u - 1);
+        long destNode = static_cast<long>(v - 1);
         tempEdges.push_back({srcNode, destNode});
         if (srcNode != destNode) tempEdges.push_back({destNode, srcNode});
     }
@@ -491,12 +492,12 @@ CSRGraph loadFromMTX(const string& filename) {
         return a.dst < b.dst;
     });
  
-    graph.edgeCount = static_cast<long long>(tempEdges.size());
+    graph.edgeCount = static_cast<long>(tempEdges.size());
     graph.vertexToAdjacenceniesStart.assign(graph.vertexCount + 1, 0);
     graph.adjacencies.resize(tempEdges.size());
  
     for (const Edge& e : tempEdges) graph.vertexToAdjacenceniesStart[e.src + 1]++;
-    for (long long i = 1; i <= graph.vertexCount; i++) graph.vertexToAdjacenceniesStart[i] += graph.vertexToAdjacenceniesStart[i - 1];
+    for (long i = 1; i <= graph.vertexCount; i++) graph.vertexToAdjacenceniesStart[i] += graph.vertexToAdjacenceniesStart[i - 1];
     for (size_t i = 0; i < tempEdges.size(); i++) graph.adjacencies[i] = tempEdges[i].dst;
  
     return graph;
@@ -596,7 +597,7 @@ void profileBFS(const string& filename, int i) {
 int main(int argc, char* argv[]) {
     iostream::sync_with_stdio(false);
     cout << "Starting profiling..." << endl;
-    cout << "Profiling operation " << argv[1] << " with n = " << argv[2] << " and i = " << argv[3] << endl;
+    cout << "Profiling operation " << argv[1] << endl;
 
     if (strcmp(argv[1], "array_max") == 0) {
         int n = stoi(argv[2]), i = stoi(argv[3]);

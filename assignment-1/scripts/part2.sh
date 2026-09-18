@@ -17,16 +17,21 @@ RESULTS="$ROOT_DIR/results"
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
+make clean -C "$ROOT_DIR"
+make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
+
 echo "running prefix sum..."
-for opt in O0 O2 O3 do
+for opt in O0 O2 O3
+do
     make clean -C "$ROOT_DIR"
     make CXXFLAGS="-std=c++17 -$opt" -C "$ROOT_DIR"
 
-    for n in 1000000 10000000 100000000 do
+    for n in 1000000 10000000 100000000
+    do
         echo "n = $n | optimization=-$opt"
-        ./main prefix_sum $n 10 \
-            >> results/prefix_sum_$opt.txt
+        $EXEC prefix_sum $n 10 \
+            > results/prefix_sum_$opt.txt
         echo "finished!"
     done
 done
-cho "finished prefix sum!"
+echo "finished prefix sum!"
