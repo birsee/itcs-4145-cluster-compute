@@ -17,6 +17,7 @@ RESULTS="$ROOT_DIR/results"
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
+make clean -C "$ROOT_DIR"
 make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
 
 echo "running BFS..."

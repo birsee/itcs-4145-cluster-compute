@@ -20,6 +20,7 @@ mkdir -p "$RESULTS"
 echo "running prefix sum..."
 for opt in O0 O2 O3
 do
+    make clean -C "$ROOT_DIR"
     make CXXFLAGS="-std=c++17 -$opt" -C "$ROOT_DIR"
 
     for n in 1000000 10000000 100000000

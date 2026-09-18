@@ -32,9 +32,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	@$(call RMDIR,$(OBJ_DIR))
-	@ifeq ($(OS),Windows_NT)
-		@if exist $(TARGET) del /F /Q $(TARGET)
-	@else
-		@rm -f $(TARGET)
-	@endif
+	@rm -f $(TARGET)
+	
 .PHONY: all clean
