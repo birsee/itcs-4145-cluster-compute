@@ -1,0 +1,189 @@
+Starting profiling...
+Profiling operation merge_sort
+Same: 
+std::sort: 
+MIN: 8189588 ns | 0.00818959 s
+MAX: 8219935 ns | 0.00821993 s
+AVG: 8195664 ns | 0.00819566 s
+MED: 8193865 ns | 0.00819386 s
+TOTAL: 81956644 ns | 0.0819566 s
+RATE: 1.22016e+08 elements/s
+Reuse: 
+MIN: 22170805 ns | 0.0221708 s
+MAX: 23082817 ns | 0.0230828 s
+AVG: 22274057 ns | 0.0222741 s
+MED: 22181285 ns | 0.0221813 s
+TOTAL: 222740570 ns | 0.222741 s
+RATE: 4.48953e+07 elements/s
+Sorted: 
+std::sort: 
+MIN: 8702069 ns | 0.00870207 s
+MAX: 8786624 ns | 0.00878662 s
+AVG: 8765804 ns | 0.0087658 s
+MED: 8770701 ns | 0.0087707 s
+TOTAL: 87658042 ns | 0.087658 s
+RATE: 1.1408e+08 elements/s
+Reuse: 
+MIN: 22125823 ns | 0.0221258 s
+MAX: 22215359 ns | 0.0222154 s
+AVG: 22152177 ns | 0.0221522 s
+MED: 22142047 ns | 0.022142 s
+TOTAL: 221521777 ns | 0.221522 s
+RATE: 4.51423e+07 elements/s
+Reverse: 
+std::sort: 
+MIN: 8708976 ns | 0.00870898 s
+MAX: 8781092 ns | 0.00878109 s
+AVG: 8736762 ns | 0.00873676 s
+MED: 8734241 ns | 0.00873424 s
+TOTAL: 87367629 ns | 0.0873676 s
+RATE: 1.14459e+08 elements/s
+Reuse: 
+MIN: 22112711 ns | 0.0221127 s
+MAX: 22136584 ns | 0.0221366 s
+AVG: 22125917 ns | 0.0221259 s
+MED: 22128619 ns | 0.0221286 s
+TOTAL: 221259171 ns | 0.221259 s
+RATE: 4.51959e+07 elements/s
+Random: 
+std::sort: 
+MIN: 7731098 ns | 0.0077311 s
+MAX: 7746154 ns | 0.00774615 s
+AVG: 7735995 ns | 0.00773599 s
+MED: 7734727 ns | 0.00773473 s
+TOTAL: 77359954 ns | 0.07736 s
+RATE: 1.29266e+08 elements/s
+Reuse: 
+MIN: 22122226 ns | 0.0221222 s
+MAX: 22157311 ns | 0.0221573 s
+AVG: 22142098 ns | 0.0221421 s
+MED: 22141249 ns | 0.0221412 s
+TOTAL: 221420980 ns | 0.221421 s
+RATE: 4.51628e+07 elements/s
+dirty compiler hack, don't look at this...4.4022e+07
+Starting profiling...
+Profiling operation merge_sort
+Same: 
+std::sort: 
+MIN: 103140694 ns | 0.103141 s
+MAX: 103373750 ns | 0.103374 s
+AVG: 103191181 ns | 0.103191 s
+MED: 103171322 ns | 0.103171 s
+TOTAL: 1031911817 ns | 1.03191 s
+RATE: 9.69075e+07 elements/s
+Reuse: 
+MIN: 270510109 ns | 0.27051 s
+MAX: 271440410 ns | 0.27144 s
+AVG: 270909621 ns | 0.27091 s
+MED: 270666493 ns | 0.270666 s
+TOTAL: 2709096212 ns | 2.7091 s
+RATE: 3.69127e+07 elements/s
+Sorted: 
+std::sort: 
+MIN: 115492310 ns | 0.115492 s
+MAX: 116178615 ns | 0.116179 s
+AVG: 115881590 ns | 0.115882 s
+MED: 115930788 ns | 0.115931 s
+TOTAL: 1158815907 ns | 1.15882 s
+RATE: 8.6295e+07 elements/s
+Reuse: 
+MIN: 270503636 ns | 0.270504 s
+MAX: 272001592 ns | 0.272002 s
+AVG: 271134118 ns | 0.271134 s
+MED: 271170892 ns | 0.271171 s
+TOTAL: 2711341184 ns | 2.71134 s
+RATE: 3.68821e+07 elements/s
+Reverse: 
+std::sort: 
+MIN: 115774554 ns | 0.115775 s
+MAX: 116267611 ns | 0.116268 s
+AVG: 116023607 ns | 0.116024 s
+MED: 116046007 ns | 0.116046 s
+TOTAL: 1160236071 ns | 1.16024 s
+RATE: 8.61894e+07 elements/s
+Reuse: 
+MIN: 270169490 ns | 0.270169 s
+MAX: 271624706 ns | 0.271625 s
+AVG: 270931485 ns | 0.270931 s
+MED: 270873619 ns | 0.270874 s
+TOTAL: 2709314859 ns | 2.70931 s
+RATE: 3.69097e+07 elements/s
+Random: 
+std::sort: 
+MIN: 105770155 ns | 0.10577 s
+MAX: 105874135 ns | 0.105874 s
+AVG: 105806289 ns | 0.105806 s
+MED: 105797561 ns | 0.105798 s
+TOTAL: 1058062893 ns | 1.05806 s
+RATE: 9.45123e+07 elements/s
+Reuse: 
+MIN: 270592960 ns | 0.270593 s
+MAX: 271870652 ns | 0.271871 s
+AVG: 271195487 ns | 0.271195 s
+MED: 271317501 ns | 0.271318 s
+TOTAL: 2711954872 ns | 2.71195 s
+RATE: 3.68738e+07 elements/s
+dirty compiler hack, don't look at this...4.40022e+08
+Starting profiling...
+Profiling operation merge_sort
+Same: 
+std::sort: 
+MIN: 1201187042 ns | 1.20119 s
+MAX: 1205517554 ns | 1.20552 s
+AVG: 1202745635 ns | 1.20275 s
+MED: 1202726681 ns | 1.20273 s
+TOTAL: 12027456352 ns | 12.0275 s
+RATE: 8.31431e+07 elements/s
+Reuse: 
+MIN: 3205205746 ns | 3.20521 s
+MAX: 3212074956 ns | 3.21207 s
+AVG: 3208502532 ns | 3.2085 s
+MED: 3208425157 ns | 3.20843 s
+TOTAL: 32085025326 ns | 32.085 s
+RATE: 3.11672e+07 elements/s
+Sorted: 
+std::sort: 
+MIN: 1422538088 ns | 1.42254 s
+MAX: 1425955804 ns | 1.42596 s
+AVG: 1424136113 ns | 1.42414 s
+MED: 1423992518 ns | 1.42399 s
+TOTAL: 14241361136 ns | 14.2414 s
+RATE: 7.0218e+07 elements/s
+Reuse: 
+MIN: 3207571144 ns | 3.20757 s
+MAX: 3210303142 ns | 3.2103 s
+AVG: 3208901620 ns | 3.2089 s
+MED: 3208825149 ns | 3.20883 s
+TOTAL: 32089016209 ns | 32.089 s
+RATE: 3.11633e+07 elements/s
+Reverse: 
+std::sort: 
+MIN: 1421417422 ns | 1.42142 s
+MAX: 1424744393 ns | 1.42474 s
+AVG: 1423038630 ns | 1.42304 s
+MED: 1423068700 ns | 1.42307 s
+TOTAL: 14230386307 ns | 14.2304 s
+RATE: 7.02722e+07 elements/s
+Reuse: 
+MIN: 3205071746 ns | 3.20507 s
+MAX: 3210107427 ns | 3.21011 s
+AVG: 3208053895 ns | 3.20805 s
+MED: 3208336463 ns | 3.20834 s
+TOTAL: 32080538951 ns | 32.0805 s
+RATE: 3.11715e+07 elements/s
+Random: 
+std::sort: 
+MIN: 1316085653 ns | 1.31609 s
+MAX: 1321702808 ns | 1.3217 s
+AVG: 1320108490 ns | 1.32011 s
+MED: 1320496554 ns | 1.3205 s
+TOTAL: 13201084907 ns | 13.2011 s
+RATE: 7.57513e+07 elements/s
+Reuse: 
+MIN: 3205491537 ns | 3.20549 s
+MAX: 3259671306 ns | 3.25967 s
+AVG: 3223887147 ns | 3.22389 s
+MED: 3210725153 ns | 3.21073 s
+TOTAL: 32238871471 ns | 32.2389 s
+RATE: 3.10185e+07 elements/s
+dirty compiler hack, don't look at this...4.40002e+09
