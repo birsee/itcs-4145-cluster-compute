@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --partition=Orion
+#SBATCH --partition=Centaurus
 #SBATCH --job-name=itsc-4145-assignment-1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
