@@ -1,5 +1,3 @@
-#define WINDOWS
-
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -13,7 +11,7 @@
 #include <functional>
 #include <string>
 
-#ifdef WINDOWS
+#ifdef _WIN32
     #include <chrono>
 #else
     #include <ctime>
@@ -26,10 +24,10 @@ using namespace std;
 // Sorry...
 
 // reused helper stuffs
-template <typename Setup, typename Kernel> double time(Setup&& setup, Kernel&& kernel) {
+template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup, Kernel&& kernel) {
     setup();
 
-    #ifdef WINDOWS
+    #ifdef _WIN32
         auto start = chrono::steady_clock::now();
     #else
         // we're required to use clock_gettime i guess???
@@ -40,42 +38,48 @@ template <typename Setup, typename Kernel> double time(Setup&& setup, Kernel&& k
     
     kernel();
 
-    #ifdef WINDOWS
+    #ifdef _WIN32
         auto end = chrono::steady_clock::now();
         auto elapsed = end - start;
-        double ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
     #else
         clock_gettime(CLOCK_MONOTONIC, &end);
-        double ms = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_nsec - start.tv_nsec) / 1000000.0;
+        unsigned long long seconds = end.tv_sec - start.tv_sec;
+        unsigned long long nanoseconds = end.tv_nsec - start.tv_nsec;
+        unsigned long long ns = (seconds * 1000000000LL) + nanoseconds;
     #endif
 
-    return ms;
+    return ns;
+}
+double secs(unsigned long long ns) {
+    unsigned long long seconds = ns / 1'000'000'000ULL;
+    unsigned long long remainder = ns % 1'000'000'000ULL;
+    return static_cast<double>(seconds) + (static_cast<double>(remainder) / 1'000'000'000.0);
 }
 
 struct ProfilingResult {
-    double min;
-    double max;
-    double med;
-    double avg;
-    double total;
+    unsigned long long min;
+    unsigned long long max;
+    unsigned long long med;
+    unsigned long long avg;
+    unsigned long long total;
 
     friend std::ostream& operator<<(std::ostream& os, const ProfilingResult& r) {
-        return os << "MIN: " << r.min << endl 
-                  << "MIN: " << r.max << endl 
-                  << "AVG: " << r.avg << endl 
-                  << "MED: " << r.med << endl 
-                  << "TOTAL: " << r.total << endl;
+        return os << "MIN: " << r.min << " ns | " << secs(r.min) << " s" << endl 
+                  << "MAX: " << r.max << " ns | " << secs(r.max) << " s" << endl 
+                  << "AVG: " << r.avg << " ns | " << secs(r.avg) << " s" << endl 
+                  << "MED: " << r.med << " ns | " << secs(r.med) << " s" << endl 
+                  << "TOTAL: " << r.total << " ns | " << secs(r.total) << " s" << endl;
     }
 };
 template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup, Kernel&& kernel, int iterations) {
     // run once as warm-up
     time(setup, kernel);
     
-    double avg = 0, total = 0, min = numeric_limits<double>::max(), max = numeric_limits<double>::min();
-    vector<double> runTimes(iterations);
+    unsigned long long total = 0, min = numeric_limits<unsigned long long>::max(), max = numeric_limits<unsigned long long>::min();
+    vector<unsigned long long> runTimes(iterations);
     for (int i = 0; i < iterations; i++) {
-        double ms = time(setup, kernel);
-        avg += ms / iterations;
+        auto ns = time(setup, kernel);
         total += ms;
         min = (ms < min) ? ms : min;
         max = (ms > max) ? ms : max;
@@ -83,15 +87,19 @@ template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup
     }
 
     // find the median
-    double med;
+    unsigned long long med;
     size_t n = runTimes.size();
     auto mid_it = runTimes.begin() + n / 2;    
     std::nth_element(runTimes.begin(), mid_it, runTimes.end());
     if (n % 2 != 0) {
-        med = static_cast<double>(*mid_it);
+        med = static_cast<unsigned long long>(*mid_it);
     } else {
         auto left_mid_it = std::max_element(runTimes.begin(), mid_it);
-        med = (*mid_it + *left_mid_it) / 2.0;
+        if ((*left_mid_it + *mid_it) % 2 != 0) {
+            med = std::midpoint(static_cast<double>(*left_mid_it), static_cast<double>(*mid_it));
+        } else {
+            med = static_cast<double>(std::midpoint(*left_mid_it, *mid_it));
+        }
     }
 
     // create the results
@@ -134,7 +142,6 @@ template <typename T> void fillArray(vector<T>& a, ArrayType type) {
 
 // hack to make sure the compiler doesnt optimize away everything.
 static double compilerHack = 0.0;
-
 
 // part 1
 template <typename T> T arrayMax(const vector<T>& a) {
@@ -204,11 +211,10 @@ void profileArrayMaxBandwidth(int i) {
         long long n = bytes / static_cast<long long>(sizeof(double));
         
         ProfilingResult result = profileArrayMax(n, i, false, false, ArrayType::Random);
-        double bandwidth = (static_cast<double>(n) * sizeof(double)) / result.avg;
+        double bandwidth = (static_cast<double>(n) * sizeof(double)) / secs(result.avg);
         cout << n << " doubles:" << endl << "BANDWIDTH: " << bandwidth << endl << result << endl;
     }
 }
-
 
 // part 2
 template <typename T> void prefixSum(vector<T>& a) {
@@ -236,11 +242,11 @@ ProfilingResult profilePrefixSum(int n, int i, bool integer, ArrayType type) {
 }
 void profilePrefixSumSet(int n, int i) {
     ProfilingResult result = profilePrefixSum(n, i, true, ArrayType::Same);
-    double rate = n / (result.avg / 1000.0);
+    double rate = n / secs(result.avg);
     cout << "Integer: " << endl << result << endl << "RATE: " << rate << endl;
 
     result = profilePrefixSum(n, i, false, ArrayType::Same);
-    rate = n / (result.avg / 1000.0);
+    rate = n / secs(result.avg);
     cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "RATE: " << rate << endl;
 }
 
@@ -294,7 +300,7 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
     
     double flops = 2.0 * m * k * n;
-    double rate = flops / (results.avg / 1000.0);
+    double rate = flops / secs(results.avg);
     cout << name << ": " << results << endl << "FLOPS: " << rate << endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
@@ -385,22 +391,47 @@ void profileMergeSortSet(int n, int i) {
     vector<ArrayType> types = {ArrayType::Random, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Same};
     for (size_t t = 0; t < types.size(); t++) {
         ArrayType type = types[t];
+
         vector<ProfilingResult> results = profileMergeSort(n, i, type);
 
         string typeName = arrayTypeName(type);
         cout << typeName << ": " << endl;
 
-        cout << "Reuse: " << results[0] << endl;
-        cout << "RATE: " << n / (results[0].avg / 1000.0) << " elements/s\n" << endl;
+        vector<int> reuseArray(n), reuseTemp(n);
+        ProfilingResult reuseResult = profile(
+            [&](){ fillArray(reuseArray, type); }, 
+            [&](){
+                mergeSortReuse(reuseArray, reuseTemp, 0, n - 1);
+                compilerHack += reuseArray.back();
+            }, i);
+        cout << "Reuse: " << reuseResult << endl;
+        cout << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
 
-        cout << "Allocate: " << results[1] << endl;
-        cout << "RATE: " << n / (results[1].avg / 1000.0) << " elements/s\n" << endl;
+        vector<int> allocateArray(n);
+        ProfilingResult allocateResult = profile(
+            [&](){
+                fillArray(allocateArray, type);
+            },
+            [&](){
+                mergeSortAllocate(allocateArray, 0, n - 1);
+                compilerHack += allocateArray.back();
+            }, i);
+        cout << "Allocate: " << allocateResult << endl;
+        cout << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
 
-        cout << "std::sort: " << results[2] << endl;
-        cout << "RATE: " << n / (results[2].avg / 1000.0) << " elements/s\n" << endl;
+        vector<int> stdsortArray(n);
+        ProfilingResult stdsortResult = profile(
+            [&](){
+                fillArray(stdsortArray, type);
+            },
+            [&](){
+                sort(stdsortArray.begin(), stdsortArray.end());
+                compilerHack += stdsortArray.back();
+            }, i);
+        cout << "std::sort: " << stdsortResult << endl;
+        cout << "RATE: " << n / secs(stdsortResult.avg) << " elements/s" << endl;
     }
 }
-
 
 // part 5
 struct CSRGraph {
@@ -412,7 +443,13 @@ struct CSRGraph {
 // lots of google-fu here. i barely understand this at all
 CSRGraph loadFromMTX(const string& filename) {
     ifstream file(filename);
-    if (!file) throw runtime_error("cannot open " + filename);
+    if (!file) {
+        cout << "couldn't open " + filename << endl;
+        CSRGraph graph;
+        graph.vertexCount = 0;
+        graph.edgeCount = 0;
+        return graph;
+    }
  
     string line;
     while (getline(file, line)) {
@@ -459,7 +496,6 @@ CSRGraph loadFromMTX(const string& filename) {
  
     return graph;
 }
-
 struct BFSResult {
     int totalLevels;
     int totalVerticesReached;
@@ -510,7 +546,8 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
 }
 void profileBFS(const string& filename, int i) {
     CSRGraph graph = loadFromMTX(filename);
-    
+    if (graph.edgeCount == 0) return;
+
     vector<int> startNodes;
     srand(42);
     while(startNodes.size() < static_cast<size_t>(i)) {
@@ -523,12 +560,12 @@ void profileBFS(const string& filename, int i) {
     
     for (int startNode : startNodes) {
         BFSResult result;
-        double timeTaken = time(
+        unsigned long long nsTaken = time(
             [](){}, 
             [&](){ result = bfs(startNode, graph); }
         );
         
-        double timeInSeconds = timeTaken / 1000.0;
+        double timeInSeconds = secs(nsTaken);
         double edgesPerSec = result.totalEdgesEvaluated / timeInSeconds;
         edgesPerSecondResults.push_back(edgesPerSec);
         
@@ -556,26 +593,29 @@ int main(int argc, char* argv[]) {
     cout << "Starting profiling..." << endl;
     cout << "Profiling operation " << argv[1] << " with n = " << argv[2] << " and i = " << argv[3] << endl;
 
-    int n = stoi(argv[2]);
-    int i = stoi(argv[3]);
     if (strcmp(argv[1], "array_max") == 0) {
+        int n = stoi(argv[2]), i = stoi(argv[3]);
+
         cout << "Array Max:" << endl;
         profileArrayMaxSet(n, i);
         cout << "Bandwidth" << endl;
         profileArrayMaxBandwidth(i);
     } else if (strcmp(argv[1], "prefix_sum") == 0) {
+        int n = stoi(argv[2]), i = stoi(argv[3]);
+
         profilePrefixSumSet(n, i);
     } else if (strcmp(argv[1], "matmul") == 0) {
-        profileMatrixMultSet(n, n, n, i);
-    } else if (strcmp(argv[1], "matmul_irregular") == 0) {
         int m = stoi(argv[2]), k = stoi(argv[3]), n = stoi(argv[4]), i = stoi(argv[5]);
         profileMatrixMultSet(m, k, n, i);
     } else if (strcmp(argv[1], "merge_sort") == 0) {
+        int n = stoi(argv[2]), i = stoi(argv[3]);
+
         profileMergeSortSet(n, i);
     } else if (strcmp(argv[1], "bfs") == 0) {
         string filename = argv[2];
-        int numStarts = stoi(argv[3]);
-        profileBFS(filename, numStarts);
+        int i = stoi(argv[3]);
+
+        profileBFS(filename, i);
     }
 
     cout << "dirty compiler hack, don't look at this..." << compilerHack << endl;

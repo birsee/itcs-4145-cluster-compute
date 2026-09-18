@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --partition=Centaurus
+#SBATCH --job-name=itsc-4145-assignment-1-pt-2
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=1:00:00
+#SBATCH --mem=128G
+
+set -e
+
+ROOT_DIR="$SLURM_SUBMIT_DIR/assignment-1"
+
+EXEC="$ROOT_DIR/main"
+RESULTS="$ROOT_DIR/results"
+
+cd "$ROOT_DIR"
+mkdir -p "$RESULTS"
+
+echo "running prefix sum..."
+for opt in O0 O2 O3 do
+    make clean
+    make CXXFLAGS="-std=c++17 -$opt"
+
+    for n in 1000000 10000000 100000000 do
+        echo "n = $n | optimization=-$opt"
+        ./main prefix_sum $n 10 \
+            >> results/prefix_sum_$opt.txt
+    done
+done
