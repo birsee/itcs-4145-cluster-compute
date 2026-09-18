@@ -1,0 +1,19 @@
+Starting profiling...
+Profiling operation prefix_sum
+Integer: 
+MIN: 57731495 ns | 0.0577315 s
+MAX: 58163599 ns | 0.0581636 s
+AVG: 57878555 ns | 0.0578786 s
+MED: 57864873 ns | 0.0578649 s
+TOTAL: 578785557 ns | 0.578786 s
+
+RATE: 1.72776e+09
+Doubles: 
+MIN: 133922215 ns | 0.133922 s
+MAX: 137105053 ns | 0.137105 s
+AVG: 135483799 ns | 0.135484 s
+MED: 135806229 ns | 0.135806 s
+TOTAL: 1354837997 ns | 1.35484 s
+
+RATE: 7.3561e+08
+dirty compiler hack, don't look at this...3.3e+09
