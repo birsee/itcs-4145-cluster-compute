@@ -4,7 +4,7 @@
 #SBATCH --job-name=pt-3
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --time=1:00:00
+#SBATCH --time=20:00
 #SBATCH --mem=128G
 
 set -e
