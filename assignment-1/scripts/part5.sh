@@ -27,7 +27,7 @@ ER_GRAPH="$ROOT_DIR/graph_er.mtx"
 RMAT_GRAPH="$ROOT_DIR/graph_rmat.mtx"
 if [ ! -f "$ER_GRAPH" ] || [ ! -f "$RMAT_GRAPH" ]; then
     python3 "$ROOT_DIR/scripts/generate_data.py"
-done
+fi
 
 # run the actual operation
 echo "er graph"
