@@ -76,37 +76,42 @@ template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup
     // run once as warm-up
     time(setup, kernel);
     
-    unsigned long long total = 0, min = numeric_limits<unsigned long long>::max(), max = numeric_limits<unsigned long long>::min();
+    unsigned long long total = 0, 
+        min = numeric_limits<unsigned long long>::max(), 
+        max = numeric_limits<unsigned long long>::min();
     vector<unsigned long long> runTimes(iterations);
     for (int i = 0; i < iterations; i++) {
         auto ns = time(setup, kernel);
-        total += ms;
-        min = (ms < min) ? ms : min;
-        max = (ms > max) ? ms : max;
-        runTimes[i] = ms;
+        total += ns;
+        min = (ns < min) ? ns : min;
+        max = (ns > max) ? ns : max;
+        runTimes[i] = ns;
     }
 
     // find the median
     unsigned long long med;
     size_t n = runTimes.size();
-    auto mid_it = runTimes.begin() + n / 2;    
-    std::nth_element(runTimes.begin(), mid_it, runTimes.end());
+    auto middle = runTimes.begin() + n / 2;    
+    std::nth_element(runTimes.begin(), middle, runTimes.end());
     if (n % 2 != 0) {
-        med = static_cast<unsigned long long>(*mid_it);
+        med = static_cast<unsigned long long>(*middle);
     } else {
-        auto left_mid_it = std::max_element(runTimes.begin(), mid_it);
-        if ((*left_mid_it + *mid_it) % 2 != 0) {
-            med = std::midpoint(static_cast<double>(*left_mid_it), static_cast<double>(*mid_it));
-        } else {
-            med = static_cast<double>(std::midpoint(*left_mid_it, *mid_it));
-        }
+        auto leftMiddle = runTimes.begin() + n / 2;
+        std::nth_element(runTimes.begin(), leftMiddle, runTimes.end());
+        unsigned long long val2 = *leftMiddle;
+
+        auto rightMiddle = leftMiddle - 1;
+        std::nth_element(runTimes.begin(), rightMiddle, leftMiddle);
+        unsigned long long val1 = *rightMiddle;
+        
+        med = val1 + (val2 - val1) / 2;
     }
 
     // create the results
     ProfilingResult results;
     results.min = min;
     results.max = max;
-    results.avg = avg;
+    results.avg = total / iterations;
     results.med = med;
     results.total = total;
     return results;
