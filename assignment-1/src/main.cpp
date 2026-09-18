@@ -355,87 +355,54 @@ void mergeSortAllocate(vector<int>& arr, int left, int right) {
     vector<int> temp(arr.size()); // allocate a new temp array every time :-(
     merge(arr, temp, left, mid, right);
 }
-// [0] = mergeSortAllocate results, [1] = mergeSortReuse results, [2] = std::sort
-vector<ProfilingResult> profileMergeSort(int n, int i, ArrayType type) {
-    vector<int> a(n);
-    fillArray(a, type);
-    vector<int> b(a);
-    vector<int> c(a);
+void profileMergeSort(int n, int i, ArrayType type) {
+    vector<int> stdSortVec(n);
+    fillArray(stdSortVec, type);
 
-    ProfilingResult resultA = profile([](){}, [&](){
-        mergeSortAllocate(a, 0, n - 1);
-        compilerHack += a.back();
+    ProfilingResult stdSortResult = profile([](){}, [&](){
+        sort(stdSortVec.begin(), stdSortVec.end());
+        compilerHack += stdSortVec.back();
     }, i);
-    ProfilingResult resultB = profile([](){}, [&](){
-        vector<int> temp(b.size());
-        mergeSortReuse(b, temp, 0, n - 1);
-        compilerHack += b.back();
+    cout << "std::sort: " << stdSortResult << endl;
+    cout << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl;
+
+    vector<int> reuseVec(stdSortVec);
+    ProfilingResult reuseResult = profile([](){}, [&](){
+        vector<int> temp(reuseVec.size());
+        mergeSortReuse(reuseVec, temp, 0, n - 1);
+        compilerHack += reuseVec.back();
     }, i);
-    ProfilingResult resultC = profile([](){}, [&](){
-        sort(c.begin(), c.end());
-        compilerHack += c.back();
+    cout << "Reuse: " << reuseResult << endl;
+    cout << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
+
+    vector<int> allocateVec(stdSortVec);
+    ProfilingResult allocateResult = profile([](){}, [&](){
+        mergeSortAllocate(allocateVec, 0, n - 1);
+        compilerHack += allocateVec.back();
     }, i);
+    cout << "Allocate: " << allocateResult << endl;
+    cout << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
     for (size_t i = 0; i < n; i++) {
-        int aVal = a[i];
-        int bVal = b[i];
-        int correctVal = c[i];
+        int aVal = reuseVec[i];
+        int bVal = allocateVec[i];
+        int correctVal = stdSortVec[i];
 
         if (aVal != correctVal || bVal != correctVal) {
             cout << "VERIFICATION FAILED: SORTED ARRAY ISN'T SORTED PROPERLY!!" << endl;
             break;
         }
     }
-
-    vector<ProfilingResult> results = {resultA, resultB, resultC};
-    return results;
 }
 
 void profileMergeSortSet(int n, int i) {
     vector<ArrayType> types = {ArrayType::Random, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Same};
     for (size_t t = 0; t < types.size(); t++) {
         ArrayType type = types[t];
-
-        vector<ProfilingResult> results = profileMergeSort(n, i, type);
-
-        string typeName = arrayTypeName(type);
-        cout << typeName << ": " << endl;
-
-        vector<int> reuseArray(n), reuseTemp(n);
-        ProfilingResult reuseResult = profile(
-            [&](){ fillArray(reuseArray, type); }, 
-            [&](){
-                mergeSortReuse(reuseArray, reuseTemp, 0, n - 1);
-                compilerHack += reuseArray.back();
-            }, i);
-        cout << "Reuse: " << reuseResult << endl;
-        cout << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
-
-        vector<int> allocateArray(n);
-        ProfilingResult allocateResult = profile(
-            [&](){
-                fillArray(allocateArray, type);
-            },
-            [&](){
-                mergeSortAllocate(allocateArray, 0, n - 1);
-                compilerHack += allocateArray.back();
-            }, i);
-        cout << "Allocate: " << allocateResult << endl;
-        cout << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
-
-        vector<int> stdsortArray(n);
-        ProfilingResult stdsortResult = profile(
-            [&](){
-                fillArray(stdsortArray, type);
-            },
-            [&](){
-                sort(stdsortArray.begin(), stdsortArray.end());
-                compilerHack += stdsortArray.back();
-            }, i);
-        cout << "std::sort: " << stdsortResult << endl;
-        cout << "RATE: " << n / secs(stdsortResult.avg) << " elements/s" << endl;
+        cout << arrayTypeName(type) << ": " << endl;
+        profileMergeSort(n, i, type);
     }
 }
 
