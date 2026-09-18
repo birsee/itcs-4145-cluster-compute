@@ -1,3 +1,5 @@
+#define WINDOWS
+
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -5,6 +7,15 @@
 #include <algorithm>
 #include <sstream>
 #include <ctime>
+#include <cstdlib>
+#include <cstring>
+#include <random>
+
+#ifdef WINDOWS
+    #include <chrono>
+#else
+    #include <ctime>
+#endif
 
 using namespace std;
 
@@ -12,16 +23,86 @@ using namespace std;
 // and i really don't want to deal with header files right now.
 // Sorry...
 
-template <typename Func>
-void time_function(Func&& func) {
-    // struct timespec start, end;
-    // clock_gettime(CLOCK_MONOTONIC, &start);
-    func();
-    // clock_gettime(CLOCK_MONOTONIC, &end);
+template <typename Func1, typename Func2, typename Func3>
+double time(Func1&& setup, Func2&& func, Func3&& cleanup) {
+    setup();
 
-    // double ms = (end.tv_sec - start.tv_sec) + 
-    //             (end.tv_nsec - start.tv_nsec) / 1000000.0;
-    // cout << "Execution time: " << ms << " ms\n";
+    #ifdef WINDOWS
+        auto start = chrono::steady_clock::now();
+    #else
+        // we're required to use clock_gettime i guess???
+        // doesnt work on my machine so i'm putting it here...
+        struct timespec start, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+    #endif
+    
+    func();
+
+    #ifdef WINDOWS
+        auto end = chrono::steady_clock::now();
+        auto elapsed = end - start;
+        double ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+    #else
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        double ms = (end.tv_nsec - start.tv_nsec) / 1000000.0;
+    #endif
+
+    cleanup();
+
+    return ms;
+}
+
+struct ProfilingResult {
+    double min;
+    double max;
+    double med;
+    double avg;
+    double total;
+
+    friend std::ostream& operator<<(std::ostream& os, const ProfilingResult& r) {
+        return os << "MIN: " << r.min << endl 
+                  << "MIN: " << r.max << endl 
+                  << "AVG: " << r.avg << endl 
+                  << "MED: " << r.med << endl 
+                  << "TOTAL: " << r.total << endl;
+    }
+};
+template <typename Func1, typename Func2, typename Func3>
+ProfilingResult profile(Func1&& setup, Func2&& func, Func3&& cleanup, int iterations) {
+    // run once as warm-up
+    func();
+    
+    double avg = 0, total = 0, min = numeric_limits<double>::max(), max = numeric_limits<double>::min();
+    vector<double> runTimes(iterations);
+    for (int i = 0; i < iterations; i++) {
+        double ms = time(setup, func, cleanup);
+        avg += ms / iterations;
+        total += ms;
+        min = (ms < min) ? min : ms;
+        max = (ms > max) ? max : ms;
+        runTimes[i] = ms;
+    }
+
+    // find the median
+    double med;
+    size_t n = runTimes.size();
+    auto mid_it = runTimes.begin() + n / 2;    
+    std::nth_element(runTimes.begin(), mid_it, runTimes.end());
+    if (n % 2 != 0) {
+        med = static_cast<double>(*mid_it);
+    } else {
+        auto left_mid_it = std::max_element(runTimes.begin(), mid_it);
+        med = (*mid_it + *left_mid_it) / 2.0;
+    }
+
+    // create the results
+    ProfilingResult results;
+    results.min = min;
+    results.max = max;
+    results.avg = avg;
+    results.med = med;
+    results.total = total;
+    return results;
 }
 
 // part 1
@@ -52,6 +133,105 @@ double maxBranchless(const vector<double>& a) {
         max = (a[i] > max) ? a[i] : max;
     }
     return max;
+}
+
+void profilePt1(int n, int i) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> randi(0, n);
+    std::uniform_real_distribution<double> randd(0, static_cast<double>(n));
+
+    cout << "--- Integer ---" << endl;
+    vector<int> ilist(n);
+
+    // sorted list, integer
+    auto result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = i * 2; },
+        [&](){ max(ilist); },
+        [](){}, i
+    );
+    cout << "Sorted: " << endl << result << endl;
+
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = i * 2; },
+        [&](){ maxBranchless(ilist); },
+        [](){}, i
+    );
+    cout << "Sorted, branchless: " << endl << result << endl;
+
+    // reverse-sorted list, integer
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = (n - i) * 2; },
+        [&](){ max(ilist); },
+        [](){}, i
+    );
+    cout << "Reverse-sorted: " << endl << result << endl;
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = (n - i) * 2; },
+        [&](){ maxBranchless(ilist); },
+        [](){}, i
+    );
+    cout << "Reverse-sorted, branchless: " << endl << result << endl;
+
+    // randomized list, integer
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = randi(gen); },
+        [&](){ max(ilist); },
+        [](){}, i
+    );
+    cout << "Randomized: " << endl << result << endl;
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) ilist[i] = randi(gen); },
+        [&](){ maxBranchless(ilist); },
+        [](){}, i
+    );
+    cout << "Randomized, branchless: " << endl << result << endl;
+
+
+    cout << "--- Doubles ---" << endl;
+    vector<double> dlist(n);
+
+    // sorted list, double
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = i * 2; },
+        [&](){ max(dlist); },
+        [](){}, i
+    );
+    cout << "Sorted: " << endl << result << endl;
+
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = i * 2; },
+        [&](){ maxBranchless(dlist); },
+        [](){}, i
+    );
+    cout << "Sorted, branchless: " << endl << result << endl;
+
+    // reverse-sorted list, double
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = (n - i) * 2; },
+        [&](){ max(dlist); },
+        [](){}, i
+    );
+    cout << "Reverse-sorted: " << endl << result << endl;
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = (n - i) * 2; },
+        [&](){ maxBranchless(dlist); },
+        [](){}, i
+    );
+    cout << "Reverse-sorted, branchless: " << endl << result << endl;
+
+    // randomized list, double
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = randd(gen); },
+        [&](){ max(dlist); },
+        [](){}, i
+    );
+    cout << "Randomized: " << endl << result << endl;
+    result = profile(
+        [&](){ for (int i = 0; i < n; i++) dlist[i] = randd(gen); },
+        [&](){ maxBranchless(dlist); },
+        [](){}, i
+    );
 }
 
 // part 2
@@ -248,8 +428,14 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
 }
 
 // the actual program
-int main() {
+int main(int argc, char* argv[]) {
     iostream::sync_with_stdio(false);
-    cout << "Hello, World!" << endl;
+    cout << "Starting profiling..." << endl;
+    cout << "Profiling operation " << argv[1] << " with n = " << argv[2] << " and i = " << argv[3] << endl;
+
+    int n = stoi(argv[2]);
+    int i = stoi(argv[3]);
+    if (strcmp(argv[1], "array_max") == 0) profilePt1(n, i);
+
     return 0;
 }
