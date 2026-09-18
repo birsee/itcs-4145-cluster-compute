@@ -23,4 +23,6 @@ do
     echo "n = $n"
     $EXEC merge_sort $n 10 \
         >> "$RESULTS/merge_sort.txt"
+    echo "finished!"
 done
+echo "finished merge sort!"

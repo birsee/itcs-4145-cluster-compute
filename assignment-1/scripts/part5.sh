@@ -25,7 +25,14 @@ if [ ! -f "$ER_GRAPH" ] || [ ! -f "$RMAT_GRAPH" ]; then
     python3 "$ROOT_DIR/scripts/generate_data.py"
 done
 # run the actual operation
+echo "er graph"
 $EXEC bfs ER_GRAPH 16 \
     >> "$RESULTS/bfs_er.txt"
+echo "er graph finished!"
+
+echo "rmat graph"
 $EXEC bfs RMAT_GRAPH 16 \
     >> "$RESULTS/bfs_rmat.txt"
+echo "rmat graph finished!"
+
+echo "finished BFS!"

@@ -23,8 +23,12 @@ do
     echo "n = $n"
     $EXEC matmul $n $n $n 10 \
         >> "$RESULTS/matmul.txt"
+    echo "finished!"
 done
 
 echo "m = 256 | k = 300 | n = 512"
 $EXEC matmul 256 300 512 10 \
     >> "$RESULTS/matmul_irregular.txt"
+echo "finished!"
+
+echo "finished matrix multiplication!"

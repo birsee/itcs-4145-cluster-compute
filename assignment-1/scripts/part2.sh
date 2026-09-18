@@ -26,5 +26,7 @@ for opt in O0 O2 O3 do
         echo "n = $n | optimization=-$opt"
         ./main prefix_sum $n 10 \
             >> results/prefix_sum_$opt.txt
+        echo "finished!"
     done
 done
+cho "finished prefix sum!"

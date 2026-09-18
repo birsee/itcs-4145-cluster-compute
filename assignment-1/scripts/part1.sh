@@ -23,4 +23,6 @@ do
     echo "n = $n"
     $EXEC array_max $n 10 \
         >> "$RESULTS/array_max.txt"
+    echo "finished!"
 done
+echo "finished array max!"
