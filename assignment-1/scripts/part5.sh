@@ -32,12 +32,12 @@ fi
 # run the actual operation
 echo "er graph"
 rm -f "$RESULTS/bfs_er.txt"
-$EXEC bfs "$ER_GRAPH" 16 > "$RESULTS/bfs_er.txt"
+$EXEC bfs "$ER_GRAPH" 16 >> "$RESULTS/bfs_er.txt"
 echo "er graph finished!"
 
 echo "rmat graph"
 rm -f "$RESULTS/bfs_er.txt"
-$EXEC bfs "$RMAT_GRAPH" 16 > "$RESULTS/bfs_rmat.txt"
+$EXEC bfs "$RMAT_GRAPH" 16 >> "$RESULTS/bfs_rmat.txt"
 echo "rmat graph finished!"
 
 echo "finished BFS!"

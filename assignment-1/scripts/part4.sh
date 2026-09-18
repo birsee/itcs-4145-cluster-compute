@@ -26,7 +26,7 @@ do
     echo "n = $n"
     rm -f "$RESULTS/merge_sort.txt"
     $EXEC merge_sort $n 10 \
-        > "$RESULTS/merge_sort.txt"
+        >> "$RESULTS/merge_sort.txt"
     echo "finished!"
 done
 echo "finished merge sort!"

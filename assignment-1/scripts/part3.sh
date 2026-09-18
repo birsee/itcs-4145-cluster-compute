@@ -26,14 +26,14 @@ do
     echo "n = $n"
     rm -f "$RESULTS/matmul.txt"
     $EXEC matmul $n $n $n 10 \
-        > "$RESULTS/matmul.txt"
+        >> "$RESULTS/matmul.txt"
     echo "finished!"
 done
 
 echo "m = 256 | k = 300 | n = 512"
 rm -f "$RESULTS/matmul_irregular.txt"
 $EXEC matmul 256 300 512 10 \
-    > "$RESULTS/matmul_irregular.txt"
+    >> "$RESULTS/matmul_irregular.txt"
 echo "finished!"
 
 echo "finished matrix multiplication!"
