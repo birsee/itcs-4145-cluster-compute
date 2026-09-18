@@ -11,6 +11,7 @@
 #include <cstring>
 #include <random>
 #include <functional>
+#include <string>
 
 #ifdef WINDOWS
     #include <chrono>
@@ -45,7 +46,7 @@ template <typename Setup, typename Kernel> double time(Setup&& setup, Kernel&& k
         double ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
     #else
         clock_gettime(CLOCK_MONOTONIC, &end);
-        double ms = (end.tv_nsec - start.tv_nsec) / 1000000.0;
+        double ms = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_nsec - start.tv_nsec) / 1000000.0;
     #endif
 
     return ms;
@@ -104,7 +105,7 @@ template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup
 }
 
 enum class ArrayType { Same, Sorted, Reverse, Random };
-constexpr string_view arrayTypeName(ArrayType type) {
+string arrayTypeName(ArrayType type) {
     switch (type) {
         case ArrayType::Same: return "Same";
         case ArrayType::Sorted:  return "Sorted";
@@ -113,7 +114,7 @@ constexpr string_view arrayTypeName(ArrayType type) {
         default: return "Unknown";
     }
 }
-template <typename T> void fillArray(const vector<T>& a, ArrayType type) {
+template <typename T> void fillArray(vector<T>& a, ArrayType type) {
     size_t n = a.size();
     switch (type) {
         case ArrayType::Same: 
@@ -126,7 +127,7 @@ template <typename T> void fillArray(const vector<T>& a, ArrayType type) {
             for (size_t i = 0; i < n; i++) a[i] = static_cast<T>(n - i);
             break;
         case ArrayType::Random: 
-            for (size_t i = 0; i < n; i++) a[i] = static_cast<T>(rand());
+            for (size_t i = 0; i < n; i++) a[i] = static_cast<T>(rand() % 1000);
             break;
     }
 }
@@ -221,22 +222,25 @@ ProfilingResult profilePrefixSum(int n, int i, bool integer, ArrayType type) {
     if (integer) {
         vector<int> a(n);
         return profile(
-            [&](){ fillArray(a, ArrayType::Sorted); },
-            [&](){ prefixSum(a); }, i
+            [&](){ fillArray(a, type); },
+            [&](){ prefixSum(a); compilerHack += a.back(); }, i
         );
-        compilerHack += a.back();
     } else {
         vector<double> a(n);
         return profile(
             [&](){ fillArray(a, type); },
-            [&](){ prefixSum(a); }, i
+            [&](){ prefixSum(a); compilerHack += a.back(); }, i
         );
-        compilerHack += a.back();
     }
 }
 void profilePrefixSumSet(int n, int i) {
-    cout << "Integer: " << endl << profilePrefixSum(n, i, true, ArrayType::Same) << endl;
-    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl;
+    ProfilingResult result = profilePrefixSum(n, i, true, ArrayType::Same);
+    double rate = n / (result.avg / 1000.0);
+    cout << "Integer: " << endl << result << endl << "RATE: " << rate << endl;
+
+    result = profilePrefixSum(n, i, false, ArrayType::Same);
+    rate = n / (result.avg / 1000.0);
+    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "RATE: " << rate << endl;
 }
 
 // part 3
@@ -284,17 +288,25 @@ void matrixMultKJI(const vector<double>& A, const vector<double>& B, vector<doub
         for (int i = 0; i < M; i++) C[i * N + j] += A[i * K + k] * b;
     }
 }
-void profileMatrixMult(int n, int i) {
+template <typename MultiplyFunction> void profileMatrixMult(const string& name, MultiplyFunction func, const vector<double>& a, const vector<double>& b, vector<double>& c, int m, int k, int n, int i) {
+    fill(c.begin(), c.end(), 0.0); // reset c
+    ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
+    
+    double flops = 2.0 * m * k * n;
+    double rate = flops / (results.avg / 1000.0);
+    cout << name << ": " << results << endl << "FLOPS: " << rate << endl;
+}
+void profileMatrixMultSet(int m, int k, int n, int i) {
     vector<double> a(n * n), b(n * n), c(n * n);
     fillArray(a, ArrayType::Random);
     fillArray(b, ArrayType::Random);
 
-    cout << "IJK: " << endl << profile([](){}, [&](){ matrixMultIJK(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
-    cout << "IKJ: " << endl << profile([](){}, [&](){ matrixMultIKJ(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
-    cout << "JIK: " << endl << profile([](){}, [&](){ matrixMultJIK(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
-    cout << "JKI: " << endl << profile([](){}, [&](){ matrixMultJKI(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
-    cout << "KIJ: " << endl << profile([](){}, [&](){ matrixMultKIJ(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
-    cout << "KJI: " << endl << profile([](){}, [&](){ matrixMultKJI(a, b, c, n, n, n); compilerHack += c.back(); }, i) << endl;
+    profileMatrixMult("IJK", matrixMultIJK, a, b, c, m, k, n, i);
+    profileMatrixMult("IKJ", matrixMultIKJ, a, b, c, m, k, n, i);
+    profileMatrixMult("JIK", matrixMultJIK, a, b, c, m, k, n, i);
+    profileMatrixMult("JKI", matrixMultJKI, a, b, c, m, k, n, i);
+    profileMatrixMult("KIJ", matrixMultKIJ, a, b, c, m, k, n, i);
+    profileMatrixMult("KJI", matrixMultKJI, a, b, c, m, k, n, i);
 }
 
 // part 4
@@ -302,17 +314,12 @@ void merge(vector<int>& arr, vector<int>& temp, int left, int mid, int right) {
     int i = left;
     int j = mid + 1;
     int k = left;
-
     while (i <= mid && j <= right) {
-        if (arr[i] <= arr[j]) {
-            temp[k++] = arr[i++];
-        } else {
-            temp[k++] = arr[j++];
-        }
+        if (arr[i] <= arr[j]) temp[k++] = arr[i++];
+        else temp[k++] = arr[j++];
     }
     while (i <= mid) temp[k++] = arr[i++];
     while (j <= right) temp[k++] = arr[j++];
-    
     for (i = left; i <= right; ++i) arr[i] = temp[i];
 }
 void mergeSortReuse(vector<int>& arr, vector<int>& temp, int left, int right) {
@@ -340,12 +347,13 @@ vector<ProfilingResult> profileMergeSort(int n, int i, ArrayType type) {
     vector<int> c(a);
 
     ProfilingResult resultA = profile([](){}, [&](){
-        mergeSortAllocate(a, 0, n - 1); compilerHack += c.back();
+        mergeSortAllocate(a, 0, n - 1);
+        compilerHack += a.back();
     }, i);
     ProfilingResult resultB = profile([](){}, [&](){
         vector<int> temp(b.size());
         mergeSortReuse(b, temp, 0, n - 1);
-        compilerHack += c.back();
+        compilerHack += b.back();
     }, i);
     ProfilingResult resultC = profile([](){}, [&](){
         sort(c.begin(), c.end());
@@ -370,7 +378,23 @@ vector<ProfilingResult> profileMergeSort(int n, int i, ArrayType type) {
 }
 
 void profileMergeSortSet(int n, int i) {
-    // todo
+    vector<ArrayType> types = {ArrayType::Random, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Same};
+    for (size_t t = 0; t < types.size(); t++) {
+        ArrayType type = types[t];
+        vector<ProfilingResult> results = profileMergeSort(n, i, type);
+
+        string typeName = arrayTypeName(type);
+        cout << typeName << ": " << endl;
+
+        cout << "Reuse: " << results[0] << endl;
+        cout << "RATE: " << n / (results[0].avg / 1000.0) << " elements/s\n" << endl;
+
+        cout << "Allocate: " << results[1] << endl;
+        cout << "RATE: " << n / (results[1].avg / 1000.0) << " elements/s\n" << endl;
+
+        cout << "std::sort: " << results[2] << endl;
+        cout << "RATE: " << n / (results[2].avg / 1000.0) << " elements/s\n" << endl;
+    }
 }
 
 
@@ -435,6 +459,7 @@ CSRGraph loadFromMTX(const string& filename) {
 struct BFSResult {
     int totalLevels;
     int totalVerticesReached;
+    int totalEdgesEvaluated;
     double fractionReached;
     vector<int> frontierSizes;
 };
@@ -448,6 +473,7 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
     BFSResult result;
     result.totalLevels = 0;
     result.totalVerticesReached = 0;
+    result.totalEdgesEvaluated = 0;
 
     while (!frontier.empty()) {
         int currentFrontierSize = frontier.size();
@@ -463,7 +489,7 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
             
             for (int i = adjacenciesStart; i < adjacenciesEnd; i++) {
                 int nodeToVisit = graph.adjacencies[i];
-                
+                result.totalEdgesEvaluated++;
                 if (visited[nodeToVisit]) continue;
 
                 visited[nodeToVisit] = true;
@@ -478,8 +504,46 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
 
     return result;
 }
-void profileBFS(int n, int i) {
-    // todo
+void profileBFS(const string& filename, int i) {
+    CSRGraph graph = loadFromMTX(filename);
+    
+    vector<int> startNodes;
+    srand(42);
+    while(startNodes.size() < static_cast<size_t>(i)) {
+        int v = rand() % graph.vertexCount;
+        if (graph.vertexToAdjacenceniesStart[v+1] > graph.vertexToAdjacenceniesStart[v])
+            startNodes.push_back(v);
+    }
+
+    vector<double> edgesPerSecondResults;
+    
+    for (int startNode : startNodes) {
+        BFSResult result;
+        double timeTaken = time(
+            [](){}, 
+            [&](){ result = bfs(startNode, graph); }
+        );
+        
+        double timeInSeconds = timeTaken / 1000.0;
+        double edgesPerSec = result.totalEdgesEvaluated / timeInSeconds;
+        edgesPerSecondResults.push_back(edgesPerSec);
+        
+        cout << "Results for starting from node " << startNode << endl
+             << "LEVELS: " << result.totalLevels << endl
+             << "% REACHED: " << result.fractionReached << endl
+             << "EDGES INSPECTED: " << result.totalEdgesEvaluated << endl
+             << "TEPS: " << edgesPerSec << endl;
+    }
+    
+    sort(edgesPerSecondResults.begin(), edgesPerSecondResults.end());
+    double min_teps = edgesPerSecondResults.front();
+    double max_teps = edgesPerSecondResults.back();
+    double med_teps = edgesPerSecondResults[edgesPerSecondResults.size() / 2];
+    
+    cout << "Totals:" << endl
+         << "MIN: " << min_teps << endl 
+         << "MEDIAN: " << med_teps << endl
+         << "MAX: " << max_teps << endl;
 }
 
 // the actual program
@@ -493,9 +557,21 @@ int main(int argc, char* argv[]) {
     if (strcmp(argv[1], "array_max") == 0) {
         cout << "Array Max:" << endl;
         profileArrayMaxSet(n, i);
-
         cout << "Bandwidth" << endl;
         profileArrayMaxBandwidth(i);
+    } else if (strcmp(argv[1], "prefix_sum") == 0) {
+        profilePrefixSumSet(n, i);
+    } else if (strcmp(argv[1], "matmul") == 0) {
+        profileMatrixMultSet(n, n, n, i);
+    } else if (strcmp(argv[1], "matmul_irregular") == 0) {
+        int m = stoi(argv[2]), k = stoi(argv[3]), n = stoi(argv[4]), i = stoi(argv[5]);
+        profileMatrixMultSet(m, k, n, i);
+    } else if (strcmp(argv[1], "merge_sort") == 0) {
+        profileMergeSortSet(n, i);
+    } else if (strcmp(argv[1], "bfs") == 0) {
+        string filename = argv[2];
+        int numStarts = stoi(argv[3]);
+        profileBFS(filename, numStarts);
     }
 
     cout << "dirty compiler hack, don't look at this..." << compilerHack << endl;
