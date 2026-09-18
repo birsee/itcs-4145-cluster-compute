@@ -9,11 +9,12 @@
 
 set -e
 
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-EXEC="$ROOT_DIR/main"
+ROOT_DIR="$SLURM_SUBMIT_DIR/assignment-1"
 
+EXEC="$ROOT_DIR/main"
 RESULTS="$ROOT_DIR/results"
 
+cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
 echo "running experiments!"
