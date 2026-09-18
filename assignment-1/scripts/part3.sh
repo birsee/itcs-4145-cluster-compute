@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --partition=Centaurus
-#SBATCH --job-name=itsc-4145-assignment-1-pt-2
+#SBATCH --job-name=itsc-4145-assignment-1-pt-3
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=1:00:00
