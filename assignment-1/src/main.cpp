@@ -375,23 +375,22 @@ void profileMergeSort(int n, int i, ArrayType type) {
     cout << "Reuse: " << endl << reuseResult 
          << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
 
-    // this is horrendously slow 
-    // vector<int> allocateVec(stdSortVec);
-    // ProfilingResult allocateResult = profile([](){}, [&](){
-    //     mergeSortAllocate(allocateVec, 0, n - 1);
-    //     compilerHack += allocateVec.back();
-    // }, i);
-    // cout << "Allocate: " << endl << allocateResult 
-    //      << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
+    vector<int> allocateVec(stdSortVec);
+    ProfilingResult allocateResult = profile([](){}, [&](){
+        mergeSortAllocate(allocateVec, 0, n - 1);
+        compilerHack += allocateVec.back();
+    }, i);
+    cout << "Allocate: " << endl << allocateResult 
+         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
     for (size_t i = 0; i < n; i++) {
         int aVal = reuseVec[i];
-        //int bVal = allocateVec[i];
+        int bVal = allocateVec[i];
         int correctVal = stdSortVec[i];
 
-        if (aVal != correctVal /*|| bVal != correctVal*/) {
+        if (aVal != correctVal || bVal != correctVal) {
             cout << "VERIFICATION FAILED: SORTED ARRAY ISN'T SORTED PROPERLY!!" << endl;
             break;
         }
