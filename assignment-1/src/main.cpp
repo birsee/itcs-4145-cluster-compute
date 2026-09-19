@@ -69,7 +69,7 @@ struct ProfilingResult {
                   << "MAX: " << r.max << " ns | " << secs(r.max) << " s" << endl 
                   << "AVG: " << r.avg << " ns | " << secs(r.avg) << " s" << endl 
                   << "MED: " << r.med << " ns | " << secs(r.med) << " s" << endl 
-                  << "TOTAL: " << r.total << " ns | " << secs(r.total) << " s" << endl;
+                  << "TOTAL: " << r.total << " ns | " << secs(r.total) << " s";
     }
 };
 template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup, Kernel&& kernel, int iterations) {
@@ -191,25 +191,34 @@ ProfilingResult profileArrayMax(int n, int i, bool integer, bool branchless, Arr
 void profileArrayMaxSet(int n, int i) {
     // ints
     cout << "--- Integer ---" << endl;
-    cout << "Sorted: " << endl << profileArrayMax(n, i, true, false, ArrayType::Sorted) << endl;
-    cout << "Sorted, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Sorted) << endl;
+    int totalBytes = n * sizeof(int) * i;
 
-    cout << "Reverse-sorted: " << endl << profileArrayMax(n, i, true, false, ArrayType::Reverse) << endl;
-    cout << "Reverse-sorted, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Reverse) << endl;
-
-    cout << "Randomized: " << endl << profileArrayMax(n, i, true, false, ArrayType::Random) << endl;
-    cout << "Randomized, branchless: " << endl << profileArrayMax(n, i, true, true, ArrayType::Random) << endl;
+    ProfilingResult result = profileArrayMax(n, i, true, false, ArrayType::Sorted);
+    cout << "Sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, true, true, ArrayType::Sorted);
+    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, true, false, ArrayType::Reverse);
+    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, true, true, ArrayType::Reverse);
+    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, true, false, ArrayType::Random);
+    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, true, true, ArrayType::Random);
+    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
 
     // doubles
+    totalBytes = n * sizeof(double) * i;
     cout << "--- Double ---" << endl;
-    cout << "Sorted: " << endl << profileArrayMax(n, i, false, false, ArrayType::Sorted) << endl;
-    cout << "Sorted, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Sorted) << endl;
-
-    cout << "Reverse-sorted: " << endl << profileArrayMax(n, i, false, false, ArrayType::Reverse) << endl;
-    cout << "Reverse-sorted, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Reverse) << endl;
-
-    cout << "Randomized: " << endl << profileArrayMax(n, i, false, false, ArrayType::Random) << endl;
-    cout << "Randomized, branchless: " << endl << profileArrayMax(n, i, false, true, ArrayType::Random) << endl;
+    result = profileArrayMax(n, i, false, true, ArrayType::Sorted);
+    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, false, false, ArrayType::Reverse);
+    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, false, true, ArrayType::Reverse);
+    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, false, false, ArrayType::Random);
+    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    result = profileArrayMax(n, i, false, true, ArrayType::Random);
+    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
 }
 
 void profileArrayMaxBandwidth(int i) {
@@ -248,12 +257,12 @@ ProfilingResult profilePrefixSum(int n, int i, bool integer, ArrayType type) {
 }
 void profilePrefixSumSet(int n, int i) {
     ProfilingResult result = profilePrefixSum(n, i, true, ArrayType::Same);
-    double rate = n / secs(result.avg);
-    cout << "Integer: " << endl << result << endl << "RATE: " << rate << endl;
+    double rate = (n * i) / secs(result.total);
+    cout << "Integer: " << endl << result << endl << "ELEMENTS/S: " << rate << endl << endl;
 
     result = profilePrefixSum(n, i, false, ArrayType::Same);
-    rate = n / secs(result.avg);
-    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "RATE: " << rate << endl;
+    rate = (n * i) / secs(result.total);
+    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "ELEMENTS/S: " << rate << endl;
 }
 
 // part 3
@@ -305,9 +314,8 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     fill(c.begin(), c.end(), 0.0); // reset c
     ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
     
-    double flops = 2.0 * m * k * n;
-    double rate = flops / secs(results.avg);
-    cout << name << ": " << results << endl << "FLOPS: " << rate << endl;
+    double rate = (2.0 * m * k * n * i) / secs(results.total);
+    cout << name << ": " << results << endl << "FLOPS: " << rate << endl<< endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
     vector<double> a(m*k);
@@ -364,7 +372,7 @@ void profileMergeSort(int n, int i, ArrayType type) {
         compilerHack += stdSortVec.back();
     }, i);
     cout << "std::sort: " << endl << stdSortResult 
-         << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl;
+         << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl << endl;
 
     vector<int> reuseVec(stdSortVec);
     ProfilingResult reuseResult = profile([](){}, [&](){
@@ -373,7 +381,7 @@ void profileMergeSort(int n, int i, ArrayType type) {
         compilerHack += reuseVec.back();
     }, i);
     cout << "Reuse: " << endl << reuseResult 
-         << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl;
+         << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl << endl;
 
     vector<int> allocateVec(stdSortVec);
     ProfilingResult allocateResult = profile([](){}, [&](){
@@ -381,7 +389,7 @@ void profileMergeSort(int n, int i, ArrayType type) {
         compilerHack += allocateVec.back();
     }, i);
     cout << "Allocate: " << endl << allocateResult 
-         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl;
+         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
@@ -538,15 +546,14 @@ void profileBFS(const string& filename, int i) {
             [&](){ result = bfs(startNode, graph); }
         );
         
-        double timeInSeconds = secs(nsTaken);
-        double edgesPerSec = result.totalEdgesEvaluated / timeInSeconds;
+        double edgesPerSec = result.totalEdgesEvaluated / secs(nsTaken);
         edgesPerSecondResults.push_back(edgesPerSec);
         
         cout << "Results for starting from node " << startNode << endl
              << "LEVELS: " << result.totalLevels << endl
              << "% REACHED: " << result.fractionReached << endl
              << "EDGES INSPECTED: " << result.totalEdgesEvaluated << endl
-             << "TEPS: " << edgesPerSec << endl;
+             << "TEPS: " << edgesPerSec << endl << endl;
     }
     
     sort(edgesPerSecondResults.begin(), edgesPerSecondResults.end());
@@ -554,20 +561,21 @@ void profileBFS(const string& filename, int i) {
     double max_teps = edgesPerSecondResults.back();
     double med_teps = edgesPerSecondResults[edgesPerSecondResults.size() / 2];
     
-    cout << "Totals:" << endl
+    cout << "TEPS Totals:" << endl
          << "MIN: " << min_teps << endl 
          << "MEDIAN: " << med_teps << endl
-         << "MAX: " << max_teps << endl;
+         << "MAX: " << max_teps << endl << endl;
 }
 
 // the actual program
 int main(int argc, char* argv[]) {
     iostream::sync_with_stdio(false);
     cout << "Starting profiling..." << endl;
-    cout << "Profiling operation " << argv[1] << endl;
+    cout << "Profiling operation " << argv[1];
 
     if (strcmp(argv[1], "array_max") == 0) {
         int n = stoi(argv[2]), i = stoi(argv[3]);
+        cout << ", n = " << n << ", i = " << i << endl;
 
         cout << "Array Max:" << endl;
         profileArrayMaxSet(n, i);
@@ -575,19 +583,23 @@ int main(int argc, char* argv[]) {
         profileArrayMaxBandwidth(i);
     } else if (strcmp(argv[1], "prefix_sum") == 0) {
         int n = stoi(argv[2]), i = stoi(argv[3]);
+        cout << ", n = " << n << ", i = " << i << endl;
 
         profilePrefixSumSet(n, i);
     } else if (strcmp(argv[1], "matmul") == 0) {
         int m = stoi(argv[2]), k = stoi(argv[3]), n = stoi(argv[4]), i = stoi(argv[5]);
+        cout << ", m = " << m << ", k = " << k << ", n = " << n << endl;
+
         profileMatrixMultSet(m, k, n, i);
     } else if (strcmp(argv[1], "merge_sort") == 0) {
         int n = stoi(argv[2]), i = stoi(argv[3]);
+        cout << ", n = " << n << ", i = " << i << endl;
 
         profileMergeSortSet(n, i);
     } else if (strcmp(argv[1], "bfs") == 0) {
         string filename = argv[2];
         int i = stoi(argv[3]);
-
+        cout << ", file: " << filename << ", i = " << i << endl;
         profileBFS(filename, i);
     }
 
