@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation prefix_sum
+Profiling operation prefix_sum, n = 1000000
 Integer: 
 MIN: 352486 ns | 0.000352486 s
 MAX: 406906 ns | 0.000406906 s
@@ -18,7 +18,7 @@ TOTAL: 10878265 ns | 0.0108783 s
 RATE: 9.18092e+08
 dirty compiler hack, don't look at this...3.3e+07
 Starting profiling...
-Profiling operation prefix_sum
+Profiling operation prefix_sum, n = 10000000
 Integer: 
 MIN: 5040170 ns | 0.00504017 s
 MAX: 5110445 ns | 0.00511044 s
@@ -37,7 +37,7 @@ TOTAL: 128734048 ns | 0.128734 s
 RATE: 7.71929e+08
 dirty compiler hack, don't look at this...3.3e+08
 Starting profiling...
-Profiling operation prefix_sum
+Profiling operation prefix_sum, n = 100000000
 Integer: 
 MIN: 57801773 ns | 0.0578018 s
 MAX: 58186734 ns | 0.0581867 s

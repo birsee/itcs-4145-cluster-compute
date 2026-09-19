@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation array_max
+Profiling operation array_max, n = 1000000
 Array Max:
 --- Integer ---
 Sorted: 
@@ -234,7 +234,7 @@ TOTAL: 425636824 ns | 0.425637 s
 
 dirty compiler hack, don't look at this...8.82417e+07
 Starting profiling...
-Profiling operation array_max
+Profiling operation array_max, n = 10000000
 Array Max:
 --- Integer ---
 Sorted: 
@@ -469,7 +469,7 @@ TOTAL: 428408179 ns | 0.428408 s
 
 dirty compiler hack, don't look at this...8.80242e+08
 Starting profiling...
-Profiling operation array_max
+Profiling operation array_max, n = 100000000
 Array Max:
 --- Integer ---
 Sorted: 

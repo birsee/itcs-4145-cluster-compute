@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation matmul
+Profiling operation matmul, m = 256, n = 512, k = 300
 IJK: MIN: 70428129 ns | 0.0704281 s
 MAX: 70483593 ns | 0.0704836 s
 AVG: 70455817 ns | 0.0704558 s

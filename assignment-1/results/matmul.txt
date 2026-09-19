@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation matmul
+Profiling operation matmul, m = 256, n = 256, k = 256
 IJK: MIN: 17294766 ns | 0.0172948 s
 MAX: 17319258 ns | 0.0173193 s
 AVG: 17301287 ns | 0.0173013 s
@@ -44,7 +44,7 @@ TOTAL: 546947060 ns | 0.546947 s
 FLOPS: 6.13486e+08
 dirty compiler hack, don't look at this...1.73787e+10
 Starting profiling...
-Profiling operation matmul
+Profiling operation matmul, m = 512, n = 512, k = 512
 IJK: MIN: 416705621 ns | 0.416706 s
 MAX: 416785146 ns | 0.416785 s
 AVG: 416746889 ns | 0.416747 s
@@ -89,7 +89,7 @@ TOTAL: 8560773808 ns | 8.56077 s
 FLOPS: 3.13564e+08
 dirty compiler hack, don't look at this...3.73801e+10
 Starting profiling...
-Profiling operation matmul
+Profiling operation matmul, m = 1024, n = 1024, k = 1024
 IJK: MIN: 3117777047 ns | 3.11778 s
 MAX: 3136569498 ns | 3.13657 s
 AVG: 3119816932 ns | 3.11982 s

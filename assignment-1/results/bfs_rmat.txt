@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation bfs
+Profiling operation bfs, type = rmat
 Results for starting from node 572998
 LEVELS: 7
 % REACHED: 1

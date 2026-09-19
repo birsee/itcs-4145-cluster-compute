@@ -1,5 +1,5 @@
 Starting profiling...
-Profiling operation merge_sort
+Profiling operation merge_sort, n = 1000000
 Same: 
 std::sort: 
 MIN: 8189588 ns | 0.00818959 s
@@ -62,7 +62,7 @@ TOTAL: 221420980 ns | 0.221421 s
 RATE: 4.51628e+07 elements/s
 dirty compiler hack, don't look at this...4.4022e+07
 Starting profiling...
-Profiling operation merge_sort
+Profiling operation merge_sort, n = 10000000
 Same: 
 std::sort: 
 MIN: 103140694 ns | 0.103141 s
@@ -125,7 +125,7 @@ TOTAL: 2711954872 ns | 2.71195 s
 RATE: 3.68738e+07 elements/s
 dirty compiler hack, don't look at this...4.40022e+08
 Starting profiling...
-Profiling operation merge_sort
+Profiling operation merge_sort, n = 100000000
 Same: 
 std::sort: 
 MIN: 1201187042 ns | 1.20119 s
