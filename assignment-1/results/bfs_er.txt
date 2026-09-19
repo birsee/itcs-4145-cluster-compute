@@ -1,87 +1,104 @@
 Starting profiling...
-Profiling operation bfs, type = ER
+Profiling operation bfs, file: /users/emuncy/itcs-4145-cluster-compute/assignment-1/graph_er.mtx, i = 16
 Results for starting from node 572998
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 5.96658e+07
+TEPS: 6.68858e+07
+
 Results for starting from node 803940
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 6.35781e+07
+TEPS: 7.04179e+07
+
 Results for starting from node 442417
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 6.70462e+07
+TEPS: 7.15099e+07
+
 Results for starting from node 265001
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 6.81125e+07
+TEPS: 7.06636e+07
+
 Results for starting from node 451940
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.01281e+07
+TEPS: 7.14683e+07
+
 Results for starting from node 275846
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 6.90554e+07
+TEPS: 7.07561e+07
+
 Results for starting from node 704493
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.05165e+07
+TEPS: 7.15343e+07
+
 Results for starting from node 732572
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.00477e+07
+TEPS: 7.06188e+07
+
 Results for starting from node 829143
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.01128e+07
+TEPS: 7.07592e+07
+
 Results for starting from node 46367
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.13199e+07
+TEPS: 7.15407e+07
+
 Results for starting from node 529602
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.14307e+07
+TEPS: 7.14938e+07
+
 Results for starting from node 524551
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.04192e+07
+TEPS: 7.08016e+07
+
 Results for starting from node 1025317
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.01826e+07
+TEPS: 7.07023e+07
+
 Results for starting from node 1018952
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.02255e+07
+TEPS: 7.0705e+07
+
 Results for starting from node 644128
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.02504e+07
+TEPS: 7.07633e+07
+
 Results for starting from node 896930
 LEVELS: 8
 % REACHED: 1
 EDGES INSPECTED: 16772918
-TEPS: 7.02294e+07
-Totals:
-MIN: 5.96658e+07
-MEDIAN: 7.01826e+07
-MAX: 7.14307e+07
+TEPS: 7.08155e+07
+
+TEPS Totals:
+MIN: 6.68858e+07
+MEDIAN: 7.07633e+07
+MAX: 7.15407e+07
+
 dirty compiler hack, don't look at this...0
