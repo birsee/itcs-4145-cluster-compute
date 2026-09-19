@@ -191,7 +191,7 @@ ProfilingResult profileArrayMax(int n, int i, bool integer, bool branchless, Arr
 void profileArrayMaxSet(int n, int i) {
     // ints
     cout << "--- Integer ---" << endl;
-    int totalBytes = n * sizeof(int) * i;
+    unsigned long long totalBytes = n * sizeof(int) * i;
 
     ProfilingResult result = profileArrayMax(n, i, true, false, ArrayType::Sorted);
     cout << "Sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
@@ -223,10 +223,11 @@ void profileArrayMaxSet(int n, int i) {
 
 void profileArrayMaxBandwidth(int i) {
     for (long long bytes = 2LL * 1024; bytes <= 256LL * 1024 * 1024; bytes *= 2) {
-        long long n = bytes / static_cast<long long>(sizeof(double));
-        
+        unsigned long long n = bytes / static_cast<long long>(sizeof(double));
+        unsigned long long totalBytes = n * sizeof(double) * i;
+
         ProfilingResult result = profileArrayMax(n, i, false, false, ArrayType::Random);
-        double bandwidth = (static_cast<double>(n) * sizeof(double)) / secs(result.avg);
+        double bandwidth = totalBytes / secs(result.total);
         cout << n << " doubles:" << endl << "BANDWIDTH: " << bandwidth << endl << result << endl;
     }
 }
@@ -257,7 +258,7 @@ ProfilingResult profilePrefixSum(int n, int i, bool integer, ArrayType type) {
 }
 void profilePrefixSumSet(int n, int i) {
     ProfilingResult result = profilePrefixSum(n, i, true, ArrayType::Same);
-    double rate = (n * i) / secs(result.total);
+    long double rate = (n * i) / secs(result.total);
     cout << "Integer: " << endl << result << endl << "ELEMENTS/S: " << rate << endl << endl;
 
     result = profilePrefixSum(n, i, false, ArrayType::Same);
@@ -314,7 +315,7 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     fill(c.begin(), c.end(), 0.0); // reset c
     ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
     
-    double rate = (2.0 * m * k * n * i) / secs(results.total);
+    long double rate = (2.0 * m * k * n * i) / secs(results.total);
     cout << name << ": " << results << endl << "FLOPS: " << rate << endl<< endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
@@ -367,12 +368,14 @@ void profileMergeSort(int n, int i, ArrayType type) {
     vector<int> stdSortVec(n);
     fillArray(stdSortVec, type);
 
+    unsigned long long totalItems = n * i;
+
     ProfilingResult stdSortResult = profile([](){}, [&](){
         sort(stdSortVec.begin(), stdSortVec.end());
         compilerHack += stdSortVec.back();
     }, i);
     cout << "std::sort: " << endl << stdSortResult 
-         << "RATE: " << n / secs(stdSortResult.avg) << " elements/s" << endl << endl;
+         << "RATE: " << totalItems / secs(stdSortResult.total) << " elements/s" << endl << endl;
 
     vector<int> reuseVec(stdSortVec);
     ProfilingResult reuseResult = profile([](){}, [&](){
@@ -381,7 +384,7 @@ void profileMergeSort(int n, int i, ArrayType type) {
         compilerHack += reuseVec.back();
     }, i);
     cout << "Reuse: " << endl << reuseResult 
-         << "RATE: " << n / secs(reuseResult.avg) << " elements/s" << endl << endl;
+         << "RATE: " << totalItems / secs(reuseResult.total) << " elements/s" << endl << endl;
 
     // vector<int> allocateVec(stdSortVec);
     // ProfilingResult allocateResult = profile([](){}, [&](){
