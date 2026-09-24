@@ -29,7 +29,7 @@ done
 
 echo "m = 256 | k = 300 | n = 512"
 rm -f "$RESULTS/matmul_irregular.csv"
-$EXEC matmul "$RESULTS/matmul_irregular.csv" $n $n $n 10
+$EXEC matmul "$RESULTS/matmul_irregular.csv" 256 300 512 10
 echo "finished!"
 
 echo "finished matrix multiplication!"
