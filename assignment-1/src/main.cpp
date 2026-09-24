@@ -30,8 +30,7 @@ template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup
     #ifdef _WIN32
         auto start = chrono::steady_clock::now();
     #else
-        // we're required to use clock_gettime i guess???
-        // doesnt work on my machine so i'm putting it here...
+        //required to use clock_gettime
         struct timespec start, end;
         clock_gettime(CLOCK_MONOTONIC, &start);
     #endif
@@ -121,7 +120,7 @@ enum class ArrayType { Same, Sorted, Reverse, Random };
 string arrayTypeName(ArrayType type) {
     switch (type) {
         case ArrayType::Same: return "Same";
-        case ArrayType::Sorted:  return "Sorted";
+        case ArrayType::Sorted: return "Sorted";
         case ArrayType::Reverse: return "Reverse";
         case ArrayType::Random: return "Random";
         default: return "Unknown";
@@ -228,7 +227,7 @@ void profileArrayMaxBandwidth(int i) {
 
         ProfilingResult result = profileArrayMax(n, i, false, false, ArrayType::Random);
         double bandwidth = totalBytes / secs(result.total);
-        cout << n << " doubles:" << endl << "BANDWIDTH: " << bandwidth << endl << result << endl;
+        cout << n << " doubles:" << endl << "BANDWIDTH: " << bandwidth << endl << result << endl << endl;
     }
 }
 
@@ -263,7 +262,7 @@ void profilePrefixSumSet(int n, int i) {
 
     result = profilePrefixSum(n, i, false, ArrayType::Same);
     rate = (n * i) / secs(result.total);
-    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "ELEMENTS/S: " << rate << endl;
+    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "ELEMENTS/S: " << rate << endl << endl;
 }
 
 // part 3
@@ -316,7 +315,7 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
     
     long double rate = (2.0 * m * k * n * i) / secs(results.total);
-    cout << name << ": " << results << endl << "FLOPS: " << rate << endl<< endl;
+    cout << name << ": " << results << endl << "FLOPS: " << rate << endl << endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
     vector<double> a(m*k);
@@ -386,22 +385,22 @@ void profileMergeSort(int n, int i, ArrayType type) {
     cout << "Reuse: " << endl << reuseResult 
          << "RATE: " << totalItems / secs(reuseResult.total) << " elements/s" << endl << endl;
 
-    // vector<int> allocateVec(stdSortVec);
-    // ProfilingResult allocateResult = profile([](){}, [&](){
-    //     mergeSortAllocate(allocateVec, 0, n - 1);
-    //     compilerHack += allocateVec.back();
-    // }, i);
-    // cout << "Allocate: " << endl << allocateResult 
-    //      << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl << endl;
+    vector<int> allocateVec(stdSortVec);
+    ProfilingResult allocateResult = profile([](){}, [&](){
+        mergeSortAllocate(allocateVec, 0, n - 1);
+        compilerHack += allocateVec.back();
+    }, i);
+    cout << "Allocate: " << endl << allocateResult 
+         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
     for (size_t i = 0; i < n; i++) {
         int aVal = reuseVec[i];
-        //int bVal = allocateVec[i];
+        int bVal = allocateVec[i];
         int correctVal = stdSortVec[i];
 
-        if (aVal != correctVal /*|| bVal != correctVal*/) {
+        if (aVal != correctVal || bVal != correctVal) {
             cout << "VERIFICATION FAILED: SORTED ARRAY ISN'T SORTED PROPERLY!!" << endl;
             break;
         }
