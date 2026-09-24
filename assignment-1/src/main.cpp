@@ -4,12 +4,12 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
-#include <ctime>
 #include <cstdlib>
 #include <cstring>
 #include <random>
 #include <functional>
 #include <string>
+#include "csv.h"
 
 #ifdef _WIN32
     #include <chrono>
@@ -24,6 +24,23 @@ using namespace std;
 // Sorry...
 
 // reused helper stuffs
+
+// profiling
+struct ProfilingResult {
+    unsigned long long min;
+    unsigned long long max;
+    unsigned long long med;
+    unsigned long long avg;
+    unsigned long long total;
+
+    friend std::ostream& operator<<(std::ostream& os, const ProfilingResult& r) {
+        return os << "MIN: " << r.min << " ns | " << nsToSec(r.min) << " s" << endl 
+                  << "MAX: " << r.max << " ns | " << nsToSec(r.max) << " s" << endl 
+                  << "AVG: " << r.avg << " ns | " << nsToSec(r.avg) << " s" << endl 
+                  << "MED: " << r.med << " ns | " << nsToSec(r.med) << " s" << endl 
+                  << "TOTAL: " << r.total << " ns | " << nsToSec(r.total) << " s";
+    }
+};
 template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup, Kernel&& kernel) {
     setup();
 
@@ -50,27 +67,6 @@ template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup
 
     return ns;
 }
-double secs(unsigned long long ns) {
-    unsigned long long seconds = ns / 1'000'000'000ULL;
-    unsigned long long remainder = ns % 1'000'000'000ULL;
-    return static_cast<double>(seconds) + (static_cast<double>(remainder) / 1'000'000'000.0);
-}
-
-struct ProfilingResult {
-    unsigned long long min;
-    unsigned long long max;
-    unsigned long long med;
-    unsigned long long avg;
-    unsigned long long total;
-
-    friend std::ostream& operator<<(std::ostream& os, const ProfilingResult& r) {
-        return os << "MIN: " << r.min << " ns | " << secs(r.min) << " s" << endl 
-                  << "MAX: " << r.max << " ns | " << secs(r.max) << " s" << endl 
-                  << "AVG: " << r.avg << " ns | " << secs(r.avg) << " s" << endl 
-                  << "MED: " << r.med << " ns | " << secs(r.med) << " s" << endl 
-                  << "TOTAL: " << r.total << " ns | " << secs(r.total) << " s";
-    }
-};
 template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup, Kernel&& kernel, int iterations) {
     // run once as warm-up
     time(setup, kernel);
@@ -86,26 +82,29 @@ template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup
         max = (ns > max) ? ns : max;
         runTimes[i] = ns;
     }
-
+ 
     // find the median
     unsigned long long med;
     size_t n = runTimes.size();
     auto middle = runTimes.begin() + n / 2;    
     std::nth_element(runTimes.begin(), middle, runTimes.end());
     if (n % 2 != 0) {
+        // if its odd, the median is the middle
         med = static_cast<unsigned long long>(*middle);
     } else {
+        // otherwise we need to take the average...
         auto leftMiddle = runTimes.begin() + n / 2;
         std::nth_element(runTimes.begin(), leftMiddle, runTimes.end());
         unsigned long long val2 = *leftMiddle;
-
+ 
         auto rightMiddle = leftMiddle - 1;
         std::nth_element(runTimes.begin(), rightMiddle, leftMiddle);
         unsigned long long val1 = *rightMiddle;
         
+        // i do it in a weird way to avoid imprecision
         med = val1 + (val2 - val1) / 2;
     }
-
+ 
     // create the results
     ProfilingResult results;
     results.min = min;
@@ -114,6 +113,11 @@ template <typename Setup, typename Kernel> ProfilingResult profile(Setup&& setup
     results.med = med;
     results.total = total;
     return results;
+}
+double nsToSec(unsigned long long ns) {
+    unsigned long long seconds = ns / 1'000'000'000ULL;
+    unsigned long long remainder = ns % 1'000'000'000ULL;
+    return static_cast<double>(seconds) + (static_cast<double>(remainder) / 1'000'000'000.0);
 }
 
 enum class ArrayType { Same, Sorted, Reverse, Random };
@@ -193,40 +197,39 @@ void profileArrayMaxSet(int n, int i) {
     unsigned long long totalBytes = n * sizeof(int) * i;
 
     ProfilingResult result = profileArrayMax(n, i, true, false, ArrayType::Sorted);
-    cout << "Sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, true, true, ArrayType::Sorted);
-    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, true, false, ArrayType::Reverse);
-    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, true, true, ArrayType::Reverse);
-    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, true, false, ArrayType::Random);
-    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, true, true, ArrayType::Random);
-    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
 
     // doubles
     totalBytes = n * sizeof(double) * i;
     cout << "--- Double ---" << endl;
     result = profileArrayMax(n, i, false, true, ArrayType::Sorted);
-    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, false, false, ArrayType::Reverse);
-    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Reverse-sorted: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, false, true, ArrayType::Reverse);
-    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Reverse-sorted, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, false, false, ArrayType::Random);
-    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Randomized: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
     result = profileArrayMax(n, i, false, true, ArrayType::Random);
-    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / secs(result.total)) << endl << endl;
+    cout << "Randomized, branchless: " << endl << result << endl << "BYTES/S: " << (totalBytes / nsToSec(result.total)) << endl << endl;
 }
-
 void profileArrayMaxBandwidth(int i) {
     for (long long bytes = 2LL * 1024; bytes <= 256LL * 1024 * 1024; bytes *= 2) {
         unsigned long long n = bytes / static_cast<long long>(sizeof(double));
         unsigned long long totalBytes = n * sizeof(double) * i;
 
         ProfilingResult result = profileArrayMax(n, i, false, false, ArrayType::Random);
-        double bandwidth = totalBytes / secs(result.total);
+        double bandwidth = totalBytes / nsToSec(result.total);
         cout << n << " doubles:" << endl << "BANDWIDTH: " << bandwidth << endl << result << endl << endl;
     }
 }
@@ -256,13 +259,13 @@ ProfilingResult profilePrefixSum(int n, int i, bool integer, ArrayType type) {
     }
 }
 void profilePrefixSumSet(int n, int i) {
-    ProfilingResult result = profilePrefixSum(n, i, true, ArrayType::Same);
-    long double rate = (n * i) / secs(result.total);
-    cout << "Integer: " << endl << result << endl << "ELEMENTS/S: " << rate << endl << endl;
+    ProfilingResult intResult = profilePrefixSum(n, i, true, ArrayType::Same);
+    long double intRate = (n * i) / nsToSec(intResult.total);
+    cout << "Integer: " << endl << intResult << endl << "ELEMENTS/S: " << intRate << endl << endl;
 
-    result = profilePrefixSum(n, i, false, ArrayType::Same);
-    rate = (n * i) / secs(result.total);
-    cout << "Doubles: " << endl << profilePrefixSum(n, i, false, ArrayType::Same) << endl << "ELEMENTS/S: " << rate << endl << endl;
+    ProfilingResult dblResult = profilePrefixSum(n, i, false, ArrayType::Same);
+    long double dblRate = (n * i) / nsToSec(dblResult.total);
+    cout << "Doubles: " << endl << dblResult << endl << "ELEMENTS/S: " << dblRate << endl << endl;
 }
 
 // part 3
@@ -314,7 +317,7 @@ template <typename MultiplyFunction> void profileMatrixMult(const string& name, 
     fill(c.begin(), c.end(), 0.0); // reset c
     ProfilingResult results = profile([](){}, [&](){ func(a, b, c, m, k, n); compilerHack += c.back(); }, i);
     
-    long double rate = (2.0 * m * k * n * i) / secs(results.total);
+    long double rate = (2.0 * m * k * n * i) / nsToSec(results.total);
     cout << name << ": " << results << endl << "FLOPS: " << rate << endl << endl;
 }
 void profileMatrixMultSet(int m, int k, int n, int i) {
@@ -364,49 +367,48 @@ void mergeSortAllocate(vector<int>& arr, int left, int right) {
     merge(arr, temp, left, mid, right);
 }
 void profileMergeSort(int n, int i, ArrayType type) {
-    vector<int> stdSortVec(n);
-    fillArray(stdSortVec, type);
+    vector<int> original(n);
+    fillArray(original, type);
+ 
+    vector<int> stdSortVec, reuseVec, allocateVec;
+    double totalItems = static_cast<double>(n) * i;
+    string typeName = arrayTypeName(type);
+    string size = to_string(n);
+ 
+    ProfilingResult stdSortResult = profile(
+        [&](){ stdSortVec = original; },
+        [&](){
+            sort(stdSortVec.begin(), stdSortVec.end());
+            compilerHack += stdSortVec.back();
+        }, i);
+ 
+    ProfilingResult reuseResult = profile(
+        [&](){ reuseVec = original; },
+        [&](){
+            vector<int> temp(reuseVec.size());
+            mergeSortReuse(reuseVec, temp, 0, n - 1);
+            compilerHack += reuseVec.back();
+        }, i);
+ 
+    ProfilingResult allocateResult = profile(
+        [&](){ allocateVec = original; },
+        [&](){
+            mergeSortAllocate(allocateVec, 0, n - 1);
+            compilerHack += allocateVec.back();
+        }, i);
 
-    unsigned long long totalItems = n * i;
-
-    ProfilingResult stdSortResult = profile([](){}, [&](){
-        sort(stdSortVec.begin(), stdSortVec.end());
-        compilerHack += stdSortVec.back();
-    }, i);
     cout << "std::sort: " << endl << stdSortResult 
-         << "RATE: " << totalItems / secs(stdSortResult.total) << " elements/s" << endl << endl;
-
-    vector<int> reuseVec(stdSortVec);
-    ProfilingResult reuseResult = profile([](){}, [&](){
-        vector<int> temp(reuseVec.size());
-        mergeSortReuse(reuseVec, temp, 0, n - 1);
-        compilerHack += reuseVec.back();
-    }, i);
+         << "RATE: " << totalItems / nsToSec(stdSortResult.total) << " elements/s" << endl << endl;
     cout << "Reuse: " << endl << reuseResult 
-         << "RATE: " << totalItems / secs(reuseResult.total) << " elements/s" << endl << endl;
-
-    vector<int> allocateVec(stdSortVec);
-    ProfilingResult allocateResult = profile([](){}, [&](){
-        mergeSortAllocate(allocateVec, 0, n - 1);
-        compilerHack += allocateVec.back();
-    }, i);
+         << "RATE: " << totalItems / nsToSec(reuseResult.total) << " elements/s" << endl << endl;
     cout << "Allocate: " << endl << allocateResult 
-         << "RATE: " << n / secs(allocateResult.avg) << " elements/s" << endl << endl;
+         << "RATE: " << n / nsToSec(allocateResult.avg) << " elements/s" << endl << endl;
 
     // verify it is sorted and contains all original elements...
     // std::sort sort is known to work, so we can compare against that.
-    for (size_t i = 0; i < n; i++) {
-        int aVal = reuseVec[i];
-        int bVal = allocateVec[i];
-        int correctVal = stdSortVec[i];
-
-        if (aVal != correctVal || bVal != correctVal) {
-            cout << "VERIFICATION FAILED: SORTED ARRAY ISN'T SORTED PROPERLY!!" << endl;
-            break;
-        }
-    }
+    bool ok = (reuseVec == stdSortVec) && (allocateVec == stdSortVec);
+    if (!ok) cerr << "VERIFICATION FAILED: SORTED ARRAY ISN'T SORTED PROPERLY!!" << endl;
 }
-
 void profileMergeSortSet(int n, int i) {
     vector<ArrayType> types = {ArrayType::Same, ArrayType::Sorted, ArrayType::Reverse, ArrayType::Random};
     for (size_t t = 0; t < types.size(); t++) {
@@ -548,7 +550,7 @@ void profileBFS(const string& filename, int i) {
             [&](){ result = bfs(startNode, graph); }
         );
         
-        double edgesPerSec = result.totalEdgesEvaluated / secs(nsTaken);
+        double edgesPerSec = result.totalEdgesEvaluated / nsToSec(nsTaken);
         edgesPerSecondResults.push_back(edgesPerSec);
         
         cout << "Results for starting from node " << startNode << endl
@@ -568,6 +570,7 @@ void profileBFS(const string& filename, int i) {
          << "MEDIAN: " << med_teps << endl
          << "MAX: " << max_teps << endl << endl;
 }
+
 
 // the actual program
 int main(int argc, char* argv[]) {
