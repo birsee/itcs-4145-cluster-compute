@@ -24,7 +24,7 @@ template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup
     #else
         //required to use clock_gettime
         struct timespec start, end;
-        std::clock_gettime(CLOCK_MONOTONIC, &start);
+        clock_gettime(CLOCK_MONOTONIC, &start);
     #endif
     
     kernel();
@@ -34,7 +34,7 @@ template <typename Setup, typename Kernel> unsigned long long time(Setup&& setup
         auto elapsed = end - start;
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
     #else
-        std::clock_gettime(CLOCK_MONOTONIC, &end);
+        clock_gettime(CLOCK_MONOTONIC, &end);
         unsigned long long seconds = end.tv_sec - start.tv_sec;
         unsigned long long nanoseconds = end.tv_nsec - start.tv_nsec;
         unsigned long long ns = (seconds * 1000000000LL) + nanoseconds;

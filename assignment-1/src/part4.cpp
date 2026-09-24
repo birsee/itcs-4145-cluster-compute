@@ -11,14 +11,14 @@
 void merge(std::vector<int>& arr, std::vector<int>& temp, int left, int mid, int right) {
     int i = left;
     int j = mid + 1;
-    int k = left;
+    int k = 0;
     while (i <= mid && j <= right) {
         if (arr[i] <= arr[j]) temp[k++] = arr[i++];
         else temp[k++] = arr[j++];
     }
     while (i <= mid) temp[k++] = arr[i++];
     while (j <= right) temp[k++] = arr[j++];
-    for (i = left; i <= right; ++i) arr[i] = temp[i];
+    for (int t = 0; t < k; ++t) arr[left + t] = temp[t];
 }
 
 void mergeSortReuse(std::vector<int>& arr, std::vector<int>& temp, int left, int right) {
@@ -36,17 +36,17 @@ void mergeSortAllocate(std::vector<int>& arr, int left, int right) {
     int mid = left + (right - left) / 2;
     mergeSortAllocate(arr, left, mid);
     mergeSortAllocate(arr, mid + 1, right);
-    std::vector<int> temp(arr.size()); // allocate a new temp array every time :-(
+    std::vector<int> temp(right - left + 1); // allocate a new temp array every time :-(
     merge(arr, temp, left, mid, right);
 }
 
 void profileMergeSort(const std::string& path, int n, int i) {
     int compilerHack = 0;
-    ProfilingResult r;
     std::ofstream csv = csvStart(path, "fill_type", "sort_type", "elements_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    if (!csv) return;
 
-    for (int i = 0; i < FillType::Count; ++i) {
-        FillType fillType = static_cast<FillType>(i);
+    for (int j = 0; j < FillType::Count; ++j) {
+        FillType fillType = static_cast<FillType>(j);
         std::string ftName = fillTypeName(fillType);
         long totalItems = static_cast<long>(n) * i;
 
@@ -60,7 +60,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 sort(stdSortVec.begin(), stdSortVec.end());
                 compilerHack += stdSortVec.back();
             }, i);
-        csvRow(csv, ftName, "std", totalItems / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+        csvRow(csv, ftName, "std", totalItems / nsToSec(stdSortResult.totalNS), stdSortResult.minNS, stdSortResult.maxNS, stdSortResult.medNS, stdSortResult.avgNS, stdSortResult.totalNS);
     
         std::vector<int> reuseVec(n);
         ProfilingResult reuseResult = profile(
@@ -70,7 +70,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 mergeSortReuse(reuseVec, temp, 0, n - 1);
                 compilerHack += reuseVec.back();
             }, i);
-        csvRow(csv, ftName, "reuse", totalItems / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+        csvRow(csv, ftName, "reuse", totalItems / nsToSec(reuseResult.totalNS), reuseResult.minNS, reuseResult.maxNS, reuseResult.medNS, reuseResult.avgNS, reuseResult.totalNS);
 
         std::vector<int> allocateVec(n);
         ProfilingResult allocateResult = profile(
@@ -79,7 +79,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 mergeSortAllocate(allocateVec, 0, n - 1);
                 compilerHack += allocateVec.back();
             }, i);
-        csvRow(csv, ftName, "allocate", totalItems / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+        csvRow(csv, ftName, "allocate", totalItems / nsToSec(allocateResult.totalNS), allocateResult.minNS, allocateResult.maxNS, allocateResult.medNS, allocateResult.avgNS, allocateResult.totalNS);
 
         // verify it is sorted and contains all original elements...
         // std::sort sort is known to work, so we can compare against that.

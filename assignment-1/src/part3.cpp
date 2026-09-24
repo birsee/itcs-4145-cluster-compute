@@ -53,23 +53,21 @@ void matrixMultKJI(const std::vector<double>& A, const std::vector<double>& B, s
     }
 }
 template <typename MultiplyFunction> std::vector<double> profileMatrixMultFunc(std::ofstream& csv, const std::string& type, MultiplyFunction func, 
+                                                            const std::vector<double>& a, const std::vector<double>& b,
                                                             int m, int k, int n, int i) {
     double compilerHack = 0.0;
-    std::vector<double> a(m * k), b(k * n), c(m * n);
+    std::vector<double> c(m * n);
     ProfilingResult r = profile(
-        [&](){ 
-            fill(a, FillType::Random);
-            fill(b, FillType::Random);
-            std::fill(c.begin(), c.end(), 0.0);
-        }, 
+        [&](){ std::fill(c.begin(), c.end(), 0.0); }, 
         [&](){ 
             func(a, b, c, m, k, n);
             compilerHack += c.back();
         }, 
         i
     );
-    long double flops = (2 * m * k * n * i) / nsToSec(r.totalNS);
-    csvRow(csv, "" + std::to_string(m) + "x" + std::to_string(k) + " " + std::to_string(k) + "x" + std::to_string(n), type, flops, r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+    
+    double flops = (2.0 * m * k * n * i) / nsToSec(r.totalNS);
+    csvRow(csv, std::to_string(m) + "x" + std::to_string(k) + " " + std::to_string(k) + "x" + std::to_string(n), type, flops, r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
 
     std::cout << compilerHack << std::endl;
 
@@ -78,26 +76,32 @@ template <typename MultiplyFunction> std::vector<double> profileMatrixMultFunc(s
 
 void profileMatrixMult(const std::string& path, int m, int k, int n, int i) {
     std::ofstream csv = csvStart(path, "size", "type", "flops", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
-    auto r0 = profileMatrixMultFunc(csv, "IJK", matrixMultIJK, m, k, n, i);
+    if (!csv) return;
 
-    auto r1 = profileMatrixMultFunc(csv, "IKJ", matrixMultIKJ, m, k, n, i);
+    std::vector<double> a(m * k), b(k * n);
+    fill(a, FillType::Random);
+    fill(b, FillType::Random);
+
+    auto r0 = profileMatrixMultFunc(csv, "IJK", matrixMultIJK, a, b, m, k, n, i);
+
+    auto r1 = profileMatrixMultFunc(csv, "IKJ", matrixMultIKJ, a, b, m, k, n, i);
     // verify they are the same, always
     if (r0 != r1) std::cerr << "VERIFICATION FAILED: MATRICES HAVE DIFFERENT RESULTS!" << std::endl;
     r0 = r1;
 
-    r1 = profileMatrixMultFunc(csv, "JIK", matrixMultJIK, m, k, n, i);
+    r1 = profileMatrixMultFunc(csv, "JIK", matrixMultJIK, a, b, m, k, n, i);
     if (r0 != r1) std::cerr << "VERIFICATION FAILED: MATRICES HAVE DIFFERENT RESULTS!" << std::endl;
     r0 = r1;
 
-    r1 = profileMatrixMultFunc(csv, "JKI", matrixMultJKI, m, k, n, i);
+    r1 = profileMatrixMultFunc(csv, "JKI", matrixMultJKI, a, b, m, k, n, i);
     if (r0 != r1) std::cerr << "VERIFICATION FAILED: MATRICES HAVE DIFFERENT RESULTS!" << std::endl;
     r0 = r1;
 
-    r1 = profileMatrixMultFunc(csv, "KIJ", matrixMultKIJ, m, k, n, i);
+    r1 = profileMatrixMultFunc(csv, "KIJ", matrixMultKIJ, a, b, m, k, n, i);
     if (r0 != r1) std::cerr << "VERIFICATION FAILED: MATRICES HAVE DIFFERENT RESULTS!" << std::endl;
     r0 = r1;
 
-    r1 = profileMatrixMultFunc(csv, "KJI", matrixMultKJI, m, k, n, i);
+    r1 = profileMatrixMultFunc(csv, "KJI", matrixMultKJI, a, b, m, k, n, i);
     if (r0 != r1) std::cerr << "VERIFICATION FAILED: MATRICES HAVE DIFFERENT RESULTS!" << std::endl;
     
     csvEnd(csv);

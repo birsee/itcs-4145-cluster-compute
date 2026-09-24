@@ -24,8 +24,8 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
 
     unsigned long long totalBytes = n * sizeof(Num) * i;
     ProfilingResult r;
-    for (int i = 0; i < FillType::Count; ++i) {
-        FillType fillType = static_cast<FillType>(i);
+    for (int j = 0; j < FillType::Count; ++j) {
+        FillType fillType = static_cast<FillType>(j);
         for (bool branchless : {false, true}) {
             std::vector<Num> a(n);
             r = branchless ? 
@@ -41,6 +41,7 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
 void profileArrayMax(const std::string& path, int n, int i) {
     ProfilingResult r;
     std::ofstream csv = csvStart(path, "type", "branchless", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    if (!csv) return;
     profileArrayTemplated<int>(csv, "integer", n, i);
     profileArrayTemplated<double>(csv, "double", n, i);
     csvEnd(csv);
@@ -51,6 +52,7 @@ void profileArrayMaxBandwidth(const std::string& path, int i) {
 
     ProfilingResult r;
     std::ofstream csv = csvStart(path, "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    if (!csv) return;
 
     for (long long bytes = 2LL * 1024; bytes <= 256LL * 1024 * 1024; bytes *= 2) {
         unsigned long long n = bytes / static_cast<long long>(sizeof(double));

@@ -4,36 +4,32 @@
 #SBATCH --job-name=pt-3
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --time=20:00
+#SBATCH --time=5:00:00
 #SBATCH --mem=128G
 
 set -e
 
 ROOT_DIR="$SLURM_SUBMIT_DIR/assignment-1"
-
-EXEC="$ROOT_DIR/main"
-RESULTS="$ROOT_DIR/results"
+RESULTS="$ROOT_DIR/data"
+EXEC="$ROOT_DIR/main_O3"
 
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
 
-make clean -C "$ROOT_DIR"
-make CXXFLAGS="-std=c++17 -O3" -C "$ROOT_DIR"
+make -C "$ROOT_DIR"
 
 echo "running matrix multiplication..."
-rm -f "$RESULTS/matmul.txt"
 for n in 256 512 1024
 do
     echo "n = $n"
-    $EXEC matmul $n $n $n 10 \
-        >> "$RESULTS/matmul.txt"
+    rm -f "$RESULTS/matmul_$n.csv"
+    $EXEC matmul "$RESULTS/matmul_$n.csv" $n $n $n 10
     echo "finished!"
 done
 
 echo "m = 256 | k = 300 | n = 512"
-rm -f "$RESULTS/matmul_irregular.txt"
-$EXEC matmul 256 300 512 10 \
-    >> "$RESULTS/matmul_irregular.txt"
+rm -f "$RESULTS/matmul_irregular.csv"
+$EXEC matmul "$RESULTS/matmul_irregular.csv" $n $n $n 10
 echo "finished!"
 
 echo "finished matrix multiplication!"

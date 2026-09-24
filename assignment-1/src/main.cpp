@@ -16,6 +16,7 @@
 #include <part4.h>
 #include <part5.h>
 
+// just defers to the different parts
 int main(int argc, char* argv[]) {
     std::iostream::sync_with_stdio(false);
 
@@ -35,25 +36,25 @@ int main(int argc, char* argv[]) {
         profileArrayMax(output, n, i);
         profileArrayMaxBandwidth(bandwidthOutput, i);
     } else if (operation == "prefix_sum") {
-        int n = std::stoi(argv[2]), i = std::stoi(argv[3]);
+        int n = std::stoi(argv[3]), i = std::stoi(argv[4]);
         std::cout << ", n = " << n << ", i = " << i << std::endl;
 
-        int optimizationLevel = std::stoi(argv[4]);
+        std::string optimizationLevel = argv[5];
 
         profilePrefixSum(output, optimizationLevel, n, i);
     } else if (operation == "matmul") {
-        int m = std::stoi(argv[2]), k = std::stoi(argv[3]), n = std::stoi(argv[4]), i = std::stoi(argv[5]);
+        int m = std::stoi(argv[3]), k = std::stoi(argv[4]), n = std::stoi(argv[5]), i = std::stoi(argv[6]);
         std::cout << ", m = " << m << ", k = " << k << ", n = " << n << ", i = " << i << std::endl;
     
         profileMatrixMult(output, m, k, n, i);
     } else if (operation == "merge_sort") {
-        int n = std::stoi(argv[2]), i = std::stoi(argv[3]);
+        int n = std::stoi(argv[3]), i = std::stoi(argv[4]);
         std::cout << ", n = " << n << ", i = " << i << std::endl;
 
         profileMergeSort(output, n, i);
     } else if (operation == "bfs") {
         std::string mtx = argv[3];
-        int n = std::stoi(argv[2]), i = std::stoi(argv[3]);
+        int n = std::stoi(argv[4]), i = std::stoi(argv[5]);
         std::cout << ", mtx file: " << mtx << ", n = " << n << ", i = " << i << std::endl;
 
         profileBFS(output, mtx, n, i);
