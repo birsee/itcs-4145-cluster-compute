@@ -10,7 +10,7 @@
 set -e
 
 ROOT_DIR="$SLURM_SUBMIT_DIR/assignment-1"
-RESULTS="$ROOT_DIR/data"
+RESULTS="$ROOT_DIR/data/part2"
 
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
