@@ -154,7 +154,7 @@ void profileBFS(const std::string& csvPath, const std::string& csvPathSearch, co
 
         std::ofstream csvSearch = csvStart(csvPathSearch + "/search_" + std::to_string(startNode) + ".csv", "level", "frontier_size");
         for (std::size_t i = 0; i < result.frontierSizes.size(); i++) {
-            csvRow(csvNode, i, result.frontierSizes[i]);
+            csvRow(csvSearch, i, result.frontierSizes[i]);
         }
         csvEnd(csvSearch);
 
