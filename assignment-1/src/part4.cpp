@@ -42,7 +42,7 @@ void mergeSortAllocate(std::vector<int>& arr, int left, int right) {
 
 void profileMergeSort(const std::string& path, int n, int i) {
     int compilerHack = 0;
-    std::ofstream csv = csvStart(path, "fill_type", "sort_type", "elements_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    std::ofstream csv = csvStart(path, "n", "fill_type", "sort_type", "elements_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
     if (!csv) return;
 
     for (int j = 0; j < FillType::Count; ++j) {
@@ -60,7 +60,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 sort(stdSortVec.begin(), stdSortVec.end());
                 compilerHack += stdSortVec.back();
             }, i);
-        csvRow(csv, ftName, "std", totalItems / nsToSec(stdSortResult.totalNS), stdSortResult.minNS, stdSortResult.maxNS, stdSortResult.medNS, stdSortResult.avgNS, stdSortResult.totalNS);
+        csvRow(csv, n, ftName, "std", totalItems / nsToSec(stdSortResult.totalNS), stdSortResult.minNS, stdSortResult.maxNS, stdSortResult.medNS, stdSortResult.avgNS, stdSortResult.totalNS);
     
         std::vector<int> reuseVec(n);
         ProfilingResult reuseResult = profile(
@@ -70,7 +70,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 mergeSortReuse(reuseVec, temp, 0, n - 1);
                 compilerHack += reuseVec.back();
             }, i);
-        csvRow(csv, ftName, "reuse", totalItems / nsToSec(reuseResult.totalNS), reuseResult.minNS, reuseResult.maxNS, reuseResult.medNS, reuseResult.avgNS, reuseResult.totalNS);
+        csvRow(csv, n, ftName, "reuse", totalItems / nsToSec(reuseResult.totalNS), reuseResult.minNS, reuseResult.maxNS, reuseResult.medNS, reuseResult.avgNS, reuseResult.totalNS);
 
         std::vector<int> allocateVec(n);
         ProfilingResult allocateResult = profile(
@@ -79,7 +79,7 @@ void profileMergeSort(const std::string& path, int n, int i) {
                 mergeSortAllocate(allocateVec, 0, n - 1);
                 compilerHack += allocateVec.back();
             }, i);
-        csvRow(csv, ftName, "allocate", totalItems / nsToSec(allocateResult.totalNS), allocateResult.minNS, allocateResult.maxNS, allocateResult.medNS, allocateResult.avgNS, allocateResult.totalNS);
+        csvRow(csv, n, ftName, "allocate", totalItems / nsToSec(allocateResult.totalNS), allocateResult.minNS, allocateResult.maxNS, allocateResult.medNS, allocateResult.avgNS, allocateResult.totalNS);
 
         // verify it is sorted and contains all original elements...
         // std::sort sort is known to work, so we can compare against that.

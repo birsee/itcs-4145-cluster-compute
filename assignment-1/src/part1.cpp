@@ -31,7 +31,7 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
             r = branchless ? 
                 profile( [&](){ fill(a, fillType); }, [&](){ compilerHack += arrayMaxBranchless(a); }, i) : 
                 profile( [&](){ fill(a, fillType); }, [&](){ compilerHack += arrayMax(a); }, i);
-            csvRow(csv, type, branchless, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+            csvRow(csv, n, type, branchless, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
         }
     }
 
@@ -40,7 +40,7 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
 
 void profileArrayMax(const std::string& path, int n, int i) {
     ProfilingResult r;
-    std::ofstream csv = csvStart(path, "type", "branchless", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    std::ofstream csv = csvStart(path, "n", "type", "branchless", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
     if (!csv) return;
     profileArrayTemplated<int>(csv, "integer", n, i);
     profileArrayTemplated<double>(csv, "double", n, i);
@@ -51,7 +51,7 @@ void profileArrayMaxBandwidth(const std::string& path, int i) {
     double compilerHack = 0.0;
 
     ProfilingResult r;
-    std::ofstream csv = csvStart(path, "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    std::ofstream csv = csvStart(path, "n", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
     if (!csv) return;
 
     for (long long bytes = 2LL * 1024; bytes <= 256LL * 1024 * 1024; bytes *= 2) {
@@ -61,7 +61,7 @@ void profileArrayMaxBandwidth(const std::string& path, int i) {
         std::vector<double> a(n);
         r = profile( [&](){ fill(a, FillType::Sorted); }, [&](){ compilerHack += arrayMax(a); }, i);
 
-        csvRow(csv, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+        csvRow(csv, n, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
     }
     csvEnd(csv);
 
