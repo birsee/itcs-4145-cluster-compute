@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 
         profileArrayMax(output, n, i);
     } else if (operation == "array_bandwidth") {
-        int i = std::stoi(argv[4]);
+        int i = std::stoi(argv[3]);
         std::cout << ", i = " << i << std::endl;
 
         profileArrayMaxBandwidth(output, i);
