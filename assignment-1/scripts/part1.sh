@@ -23,7 +23,7 @@ for n in 1000000 10000000 100000000
 do
     echo "n = $n"
     rm -f "$RESULTS/max/array_max_$n.csv"
-    $EXEC array_max "$RESULTS/max/array_max_$n.csv" "$RESULTS/bandwidth/array_bandwidth_$n.csv" $n 10
+    $EXEC array_max "$RESULTS/max/array_max_$n.csv" $n 10
     echo "finished!"
 done
 
