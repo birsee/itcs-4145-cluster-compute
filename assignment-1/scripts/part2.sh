@@ -23,8 +23,8 @@ do
     for n in 1000000 10000000 100000000
     do
         echo "n = $n | optimization=-$opt"
-        rm -f "$RESULTS/prefix_sum_$n_$opt.csv"
-        $EXEC prefix_sum "$RESULTS/prefix_sum_$n_$opt.csv" $n 10 $opt
+        rm -f "$RESULTS/prefix_sum_$n$opt.csv"
+        $EXEC prefix_sum "$RESULTS/prefix_sum_$n$opt.csv" $n 10 $opt
         echo "finished!"
     done
 done
