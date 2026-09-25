@@ -29,7 +29,7 @@ done
 
 echo "running array bandwidth..."
 rm -f "$RESULTS/array_bandwidth.csv"
-$EXEC array_bandwidth "$RESULTS/array_bandwidth.csv" $n 10
+$EXEC array_bandwidth "$RESULTS/array_bandwidth.csv" 10
 echo "finished!"
 
 echo "finished part 1!"
