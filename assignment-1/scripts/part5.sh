@@ -20,12 +20,12 @@ make -C "$ROOT_DIR"
 
 echo "running BFS..."
 
-# generate the graphs if they don't exist
+# generate the graphs
 ER_GRAPH="$ROOT_DIR/graph_er.mtx"
 RMAT_GRAPH="$ROOT_DIR/graph_rmat.mtx"
-if [ ! -f "$ER_GRAPH" ] || [ ! -f "$RMAT_GRAPH" ]; then
-    python3 "$ROOT_DIR/scripts/generate_data.py"
-fi
+rm -f $ER_GRAPH
+rm -f $RMAT_GRAPH
+python3 "$ROOT_DIR/scripts/generate_data.py"
 
 # run the actual operation
 echo "er graph"
