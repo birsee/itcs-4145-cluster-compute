@@ -29,4 +29,4 @@ do
     done
 done
 
-echo "finished prefix sum!"
+echo "finished part 2!"

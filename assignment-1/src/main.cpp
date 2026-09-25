@@ -27,14 +27,15 @@ int main(int argc, char* argv[]) {
     std::cout << "outputting results to " << output;
 
     if (operation == "array_max") {
-        std::string bandwidthOutput = argv[3];
-        std::cout << ", and bandwidth results to " << argv[3];
-
-        int n = std::stoi(argv[4]), i = std::stoi(argv[5]);
+        int n = std::stoi(argv[3]), i = std::stoi(argv[4]);
         std::cout << ", n = " << n << ", i = " << i << std::endl;
 
         profileArrayMax(output, n, i);
-        profileArrayMaxBandwidth(bandwidthOutput, i);
+    } else if (operation == "array_bandwidth") {
+        int n = std::stoi(argv[3]), i = std::stoi(argv[4]);
+        std::cout << ", i = " << i << std::endl;
+
+        profileArrayMaxBandwidth(output, i);
     } else if (operation == "prefix_sum") {
         int n = std::stoi(argv[3]), i = std::stoi(argv[4]);
         std::cout << ", n = " << n << ", i = " << i << std::endl;
@@ -53,11 +54,12 @@ int main(int argc, char* argv[]) {
 
         profileMergeSort(output, n, i);
     } else if (operation == "bfs") {
-        std::string mtx = argv[3];
-        int n = std::stoi(argv[4]), i = std::stoi(argv[5]);
+        std::string searchOutput = argv[3];
+        std::string mtx = argv[4];
+        int n = std::stoi(argv[5]), i = std::stoi(argv[6]);
         std::cout << ", mtx file: " << mtx << ", n = " << n << ", i = " << i << std::endl;
 
-        profileBFS(output, mtx, n, i);
+        profileBFS(output, searchOutput, mtx, n, i);
     }
 
     return 0;

@@ -27,4 +27,4 @@ do
     echo "finished!"
 done
 
-echo "finished merge sort!"
+echo "finished part 4!"

@@ -30,12 +30,16 @@ python3 "$ROOT_DIR/scripts/generate_data.py"
 # run the actual operation
 echo "er graph"
 rm -f "$RESULTS/bfs_er.csv"
-$EXEC bfs "$RESULTS/bfs_er.csv" "$ER_GRAPH" 16 10
+ER_SEARCH_RESULTS_PATH="$RESULTS/er/"
+rm -f "$ER_SEARCH_RESULTS_PATH*"
+$EXEC bfs "$RESULTS/bfs_er.csv" "$ER_SEARCH_RESULTS_PATH" "$ER_GRAPH" 16 10
 echo "er graph finished!"
 
 echo "rmat graph"
 rm -f "$RESULTS/bfs_rmat.csv"
-$EXEC bfs "$RESULTS/bfs_rmat.csv" "$RMAT_GRAPH" 16 10
+RMAT_SEARCH_RESULTS_PATH="$RESULTS/rmat/"
+rm -f "$RMAT_SEARCH_RESULTS_PATH*"
+$EXEC bfs "$RESULTS/bfs_rmat.csv" "$ER_SEARCH_RESULTS_PATH" "$RMAT_GRAPH" 16 10
 echo "rmat graph finished!"
 
-echo "finished BFS!"
+echo "finished part 5!"

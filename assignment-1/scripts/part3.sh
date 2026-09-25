@@ -32,4 +32,4 @@ rm -f "$RESULTS/matmul_irregular.csv"
 $EXEC matmul "$RESULTS/matmul_irregular.csv" 256 300 512 10
 echo "finished!"
 
-echo "finished matrix multiplication!"
+echo "finished part 3!"

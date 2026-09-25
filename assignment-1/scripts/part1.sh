@@ -15,7 +15,6 @@ EXEC="$ROOT_DIR/main_O3"
 
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS/max"
-mkdir -p "$RESULTS/bandwidth"
 
 make -C "$ROOT_DIR"
 
@@ -24,9 +23,13 @@ for n in 1000000 10000000 100000000
 do
     echo "n = $n"
     rm -f "$RESULTS/max/array_max_$n.csv"
-    rm -f "$RESULTS/bandwidth/array_bandwidth_$n.csv"
     $EXEC array_max "$RESULTS/max/array_max_$n.csv" "$RESULTS/bandwidth/array_bandwidth_$n.csv" $n 10
     echo "finished!"
 done
 
-echo "finished array max!"
+echo "running array bandwidth..."
+rm -f "$RESULTS/array_bandwidth.csv"
+$EXEC array_bandwidth "$RESULTS/array_bandwidth.csv" $n 10
+echo "finished!"
+
+echo "finished part 1!"

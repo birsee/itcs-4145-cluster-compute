@@ -126,7 +126,7 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
     return result;
 }
 
-void profileBFS(const std::string& csvPath, const std::string& graphPath, int n, int i) {
+void profileBFS(const std::string& csvPath, const std::string& csvPathSearch, const std::string& graphPath, int n, int i) {
     int compilerHack = 0;
 
     CSRGraph graph = loadFromMTX(graphPath);
@@ -140,6 +140,7 @@ void profileBFS(const std::string& csvPath, const std::string& graphPath, int n,
     }
 
     std::ofstream csvNode = csvStart(csvPath, "graph_type", "start_node", "edges_per_second", "edges_inspected", "percent_reached", "levels", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+
     for (int startNode : startNodes) {
         BFSResult result;
         // even though this is run multiple times, the bfs is deterministic so the BFSResult should always be the same
@@ -150,7 +151,13 @@ void profileBFS(const std::string& csvPath, const std::string& graphPath, int n,
                 compilerHack += result.frontierSizes[0];
             }, i
         );
-        
+
+        std::ofstream csvSearch = csvStart(csvPathSearch + "/search_" + std::to_string(startNode) + ".csv", "level", "frontier_size");
+        for (std::size_t i = 0; i < result.frontierSizes.size(); i++) {
+            csvRow(csvNode, i, result.frontierSizes[i]);
+        }
+        csvEnd(csvSearch);
+
         double edgesPerSec = (result.totalEdgesEvaluated * i) / nsToSec(r.totalNS);
         csvRow(csvNode, graphPath, startNode, edgesPerSec, result.totalEdgesEvaluated, result.fractionReached, result.totalLevels, 
             r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
