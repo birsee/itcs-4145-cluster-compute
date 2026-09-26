@@ -26,12 +26,14 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
     ProfilingResult r;
     for (int j = 0; j < FillType::Count; ++j) {
         FillType fillType = static_cast<FillType>(j);
+        std::string ftName = fillTypeName(fillType);
+
         for (bool branchless : {false, true}) {
             std::vector<Num> a(n);
             r = branchless ? 
                 profile( [&](){ fill(a, fillType); }, [&](){ compilerHack += arrayMaxBranchless(a); }, i) : 
                 profile( [&](){ fill(a, fillType); }, [&](){ compilerHack += arrayMax(a); }, i);
-            csvRow(csv, n, type, branchless, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
+            csvRow(csv, n, type, branchless, ftName, totalBytes / nsToSec(r.totalNS), r.minNS, r.maxNS, r.medNS, r.avgNS, r.totalNS);
         }
     }
 
@@ -40,7 +42,7 @@ template <typename Num> void profileArrayTemplated(std::ofstream& csv, const std
 
 void profileArrayMax(const std::string& path, int n, int i) {
     ProfilingResult r;
-    std::ofstream csv = csvStart(path, "n", "type", "branchless", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
+    std::ofstream csv = csvStart(path, "n", "type", "branchless", "fill_type", "bytes_per_sec", "min_ns", "max_ns", "med_ns", "avg_ns", "total_ns");
     if (!csv) return;
     profileArrayTemplated<int>(csv, "integer", n, i);
     profileArrayTemplated<double>(csv, "double", n, i);
