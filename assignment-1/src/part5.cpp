@@ -82,7 +82,10 @@ struct BFSResult {
     int totalVerticesReached;
     int totalEdgesEvaluated;
     double fractionReached;
+
     std::vector<int> frontierSizes;
+    std::vector<int> verticesReached;
+    std::vector<int> edgesEvaluated;
 };
 BFSResult bfs(int startNode, CSRGraph& graph) {
     std::queue<int> frontier;
@@ -98,8 +101,6 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
 
     while (!frontier.empty()) {
         int currentFrontierSize = frontier.size();
-        result.totalVerticesReached += currentFrontierSize;
-        result.frontierSizes.push_back(currentFrontierSize);
 
         for (int k = 0; k < currentFrontierSize; k++) {
             int nextNode = frontier.front();
@@ -117,6 +118,11 @@ BFSResult bfs(int startNode, CSRGraph& graph) {
                 frontier.push(nodeToVisit);
             }
         }
+
+        result.totalVerticesReached += frontier.size();
+        result.frontierSizes.push_back(frontier.size());
+        result.verticesReached.push_back(result.totalVerticesReached);
+        result.edgesEvaluated.push_back(result.totalEdgesEvaluated);
 
         result.totalLevels++;
     }
@@ -152,9 +158,12 @@ void profileBFS(const std::string& csvPath, const std::string& csvPathSearch, co
             }, i
         );
 
-        std::ofstream csvSearch = csvStart(csvPathSearch + "/search_" + std::to_string(startNode) + ".csv", "level", "frontier_size");
+        std::ofstream csvSearch = csvStart(csvPathSearch + "/search_" + std::to_string(startNode) + ".csv", 
+            "start_node", "level", "frontier_size", "edges_evaluated", "percent_edges_evaluated", "vertices_reached", "percent_vertices_reached");
         for (std::size_t i = 0; i < result.frontierSizes.size(); i++) {
-            csvRow(csvSearch, i, result.frontierSizes[i]);
+            csvRow(csvSearch, startNode, i, result.frontierSizes[i], 
+                result.edgesEvaluated[i], static_cast<long double>(result.edgesEvaluated[i]) / static_cast<long double>(graph.edgeCount),
+                result.verticesReached[i], static_cast<long double>(result.verticesReached[i]) / static_cast<long double>(graph.vertexCount));
         }
         csvEnd(csvSearch);
 
