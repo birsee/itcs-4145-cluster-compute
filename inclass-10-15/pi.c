@@ -113,11 +113,11 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
     // join
     for (int i = 0; i < p; i++) {
         pthread_join(threadIds[i], NULL);
-        *hits[0] += threadHits[i];
+        hits[0] += threadHits[i];
     }
 
     (void)n; (void)p; (void)seed; (void)hits; (void)work;
-    return *hits[0];
+    return hits[0];
 }
 
 int main(int argc, char **argv) {

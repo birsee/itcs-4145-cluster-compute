@@ -116,7 +116,7 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
     }
 
     (void)n; (void)p; (void)seed; (void)hits; (void)work;
-    return *hits[0];
+    return hits[0];
 }
 
 int main(int argc, char **argv) {
