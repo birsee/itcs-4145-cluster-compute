@@ -13,6 +13,8 @@
 # (pi_shared.c). The log holds the numbers the students should see.
 
 set -e
+
+cd "$SLURM_SUBMIT_DIR/inclass-10-15"
 echo "node: $(hostname)"
 lscpu | grep -E 'Model name|^CPU\(s\)|Socket'
 gcc --version | head -1
