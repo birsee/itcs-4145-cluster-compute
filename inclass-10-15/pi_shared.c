@@ -100,7 +100,11 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
     pthread_t threadIds[p];
     args_t threadArgs[p];
     for (int i = 0; i < p; i++) {
-        args_t[i] = { i, p, n, seed, hits };
+        threadArgs[i].rank = i;
+        threadArgs[i].size = p;
+        threadArgs[i].n = n;
+        threadArgs[i].seed = seed;
+        threadArgs[i].hits = &threadHits[i];
         pthread_create(&threadIds[i], NULL, work, &threadArgs[i]);
     }
 
