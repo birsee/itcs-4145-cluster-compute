@@ -96,7 +96,6 @@ static void *work(void *arg) {
 }
 
 static long pi_par(long n, int p, uint64_t seed, long *hits) {
-
     // create threads
     pthread_t threadIds[p];
     args_t threadArgs[p];
@@ -112,14 +111,14 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
     }
 
     // join
+    long results = 0;
     for (int i = 0; i < p; i++) {
         pthread_join(threadIds[i], NULL);
-        *hits += threadHits[i];
+        results += threadHits[i];
     }
-    
 
     (void)n; (void)p; (void)seed; (void)hits; (void)work;
-    return 0;
+    return results;
 }
 
 int main(int argc, char **argv) {

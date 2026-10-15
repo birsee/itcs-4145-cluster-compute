@@ -1,0 +1,27 @@
+node: gal-c1.charlotte.edu
+CPU(s):                                  36
+Model name:                              Intel(R) Xeon(R) Gold 6154 CPU @ 3.00GHz
+Socket(s):                               2
+CPU(s) scaling MHz:                      69%
+gcc (GCC) 11.5.0 20240719 (Red Hat 11.5.0-5)
+== step 1: sequential
+n = 10000000, p = 0, hits = 7852140, pi = 3.140856, error = -7.37e-04, time = 0.0425 s
+n = 100000000, p = 0, hits = 78537414, pi = 3.141497, error = -9.61e-05, time = 0.4236 s
+n = 1000000000, p = 0, hits = 785391947, pi = 3.141568, error = -2.49e-05, time = 4.2346 s
+== step 2: one shared counter, n = 1e8, p = 8, three runs
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0540 s
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0538 s
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0538 s
+== step 3: own slot per thread, n = 1e8, p = 8, three runs; then p = 1
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0534 s
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0534 s
+n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0536 s
+n = 100000000, p = 1, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.4237 s
+== step 4: timing, n = 1e9
+n = 1000000000, p = 1, hits = 0, pi = 0.000000, error = -3.14e+00, time = 4.2346 s
+n = 1000000000, p = 2, hits = 0, pi = 0.000000, error = -3.14e+00, time = 2.1200 s
+n = 1000000000, p = 4, hits = 0, pi = 0.000000, error = -3.14e+00, time = 1.0599 s
+n = 1000000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.5301 s
+n = 1000000000, p = 18, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.2361 s
+n = 1000000000, p = 36, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.1190 s
+done

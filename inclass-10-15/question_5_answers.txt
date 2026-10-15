@@ -1,0 +1,14 @@
+(a) In step 2 the estimates are wrong, and may differ from run to run. Name the three machine
+steps behind hits++ and state which memory location has more than one writer.
+
+It's the fetch - decode - execute cycle. Each thread has to grab the current value, increment
+it, and write the new. With multiple threads writing to the same memory location, they often
+interrupt each other at different stages of the cycle and read incoherent data.
+It's the first element of the hits[] array that has more than one access.
+
+
+(b) In step 3, p = 1 reproduces the sequential result, but p = 8 gives a different estimate at the
+same n. State why the result depends on p even though the program is correct.
+
+The random seeding means that the results will be somewhat non-deterministic, though it should
+eventually converge to pi as n approaches infinity.
