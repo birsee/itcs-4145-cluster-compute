@@ -106,7 +106,7 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
         threadArgs[i].size = p;
         threadArgs[i].n = n;
         threadArgs[i].seed = seed;
-        threadArgs[i].hits = &results;
+        threadArgs[i].hits = &hits[0];
         pthread_create(&threadIds[i], NULL, work, &threadArgs[i]);
     }
 
@@ -116,7 +116,7 @@ static long pi_par(long n, int p, uint64_t seed, long *hits) {
     }
 
     (void)n; (void)p; (void)seed; (void)hits; (void)work;
-    return results;
+    return *hits[0];
 }
 
 int main(int argc, char **argv) {
