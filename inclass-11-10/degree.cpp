@@ -48,6 +48,7 @@ long degree_seq(int n, const std::vector<edge_t> &edge, degrees &deg) {
 // Create and initialize the n locks here; destroy them before returning.
 // ---------------------------------------------------------------------------
 long degree_lock(int n, const std::vector<edge_t> &edge, degrees &deg) {
+  long m = static_cast<long>(edge.size());
   long sum = 0;
   omp_lock_t locks[n];
 
@@ -60,10 +61,8 @@ long degree_lock(int n, const std::vector<edge_t> &edge, degrees &deg) {
   for (long e = 0; e < m; e++) {
     int i0 = edge[e].u;
     int i1 = edge[e].v;
-
-    // ensure a consistent order!
+    // ensure a consistent order! so, no deadlocks...
     if (i0 > i1) std::swap(i0, i1);
-
     omp_lock_t lock0 = locks[i0];
     omp_lock_t lock1 = locks[i1];
 
@@ -92,6 +91,7 @@ long degree_lock(int n, const std::vector<edge_t> &edge, degrees &deg) {
 // Version 2: atomic updates (#pragma omp atomic).
 // ---------------------------------------------------------------------------
 long degree_atomic(int n, const std::vector<edge_t> &edge, degrees &deg) {
+  long m = static_cast<long>(edge.size());
   long sum = 0;
 
   #pragma omp parallel for
