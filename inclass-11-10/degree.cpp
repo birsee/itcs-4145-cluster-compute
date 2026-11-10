@@ -60,6 +60,7 @@ long degree_lock(int n, const std::vector<edge_t> &edge, degrees &deg) {
   
 
   // run da function
+  #pragma omp parallel for
   for (long e = 0; e < m; e++) {
     int i0 = edge[e].u;
     int i1 = edge[e].v;
