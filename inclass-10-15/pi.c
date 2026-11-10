@@ -88,6 +88,7 @@ static void *work(void *arg) {
     rng_t r;
     rng_seed(&r, seed + rank);
 
+
     long hitCount = count_hits(&r, points);
     *hits += hitCount;
 

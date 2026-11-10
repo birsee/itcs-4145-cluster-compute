@@ -2,26 +2,26 @@ node: gal-c1.charlotte.edu
 CPU(s):                                  36
 Model name:                              Intel(R) Xeon(R) Gold 6154 CPU @ 3.00GHz
 Socket(s):                               2
-CPU(s) scaling MHz:                      69%
+CPU(s) scaling MHz:                      75%
 gcc (GCC) 11.5.0 20240719 (Red Hat 11.5.0-5)
 == step 1: sequential
-n = 10000000, p = 0, hits = 7852140, pi = 3.140856, error = -7.37e-04, time = 0.0425 s
-n = 100000000, p = 0, hits = 78537414, pi = 3.141497, error = -9.61e-05, time = 0.4236 s
-n = 1000000000, p = 0, hits = 785391947, pi = 3.141568, error = -2.49e-05, time = 4.2346 s
+n = 10000000, p = 0, hits = 7852140, pi = 3.140856, error = -7.37e-04, time = 0.0426 s
+n = 100000000, p = 0, hits = 78537414, pi = 3.141497, error = -9.61e-05, time = 0.4254 s
+n = 1000000000, p = 0, hits = 785391947, pi = 3.141568, error = -2.49e-05, time = 4.2518 s
 == step 2: one shared counter, n = 1e8, p = 8, three runs
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0540 s
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0538 s
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0538 s
+n = 100000000, p = 8, hits = 78535008, pi = 3.141400, error = -1.92e-04, time = 0.0538 s
+n = 100000000, p = 8, hits = 140722230559960, pi = 5628889.222398, error = 5.63e+06, time = 0.0538 s
+n = 100000000, p = 8, hits = 78535008, pi = 3.141400, error = -1.92e-04, time = 0.0536 s
 == step 3: own slot per thread, n = 1e8, p = 8, three runs; then p = 1
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0534 s
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0534 s
-n = 100000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.0536 s
-n = 100000000, p = 1, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.4237 s
+n = 100000000, p = 8, hits = 140722718130520, pi = 5628908.725221, error = 5.63e+06, time = 0.0536 s
+n = 100000000, p = 8, hits = 78535008, pi = 3.141400, error = -1.92e-04, time = 0.0538 s
+n = 100000000, p = 8, hits = 78535008, pi = 3.141400, error = -1.92e-04, time = 0.0537 s
+n = 100000000, p = 1, hits = 140723750003862, pi = 5628950.000154, error = 5.63e+06, time = 0.4254 s
 == step 4: timing, n = 1e9
-n = 1000000000, p = 1, hits = 0, pi = 0.000000, error = -3.14e+00, time = 4.2346 s
-n = 1000000000, p = 2, hits = 0, pi = 0.000000, error = -3.14e+00, time = 2.1200 s
-n = 1000000000, p = 4, hits = 0, pi = 0.000000, error = -3.14e+00, time = 1.0599 s
-n = 1000000000, p = 8, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.5301 s
-n = 1000000000, p = 18, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.2361 s
-n = 1000000000, p = 36, hits = 0, pi = 0.000000, error = -3.14e+00, time = 0.1190 s
+n = 1000000000, p = 1, hits = 140728306760059, pi = 562913.227040, error = 5.63e+05, time = 4.2523 s
+n = 1000000000, p = 2, hits = 1789596057, pi = 7.158384, error = 4.02e+00, time = 2.1285 s
+n = 1000000000, p = 4, hits = 789593841, pi = 3.158375, error = 1.68e-02, time = 1.0639 s
+n = 1000000000, p = 8, hits = 785373039, pi = 3.141492, error = -1.00e-04, time = 0.5324 s
+n = 1000000000, p = 18, hits = 785396169, pi = 3.141585, error = -7.98e-06, time = 0.2371 s
+n = 1000000000, p = 36, hits = 1003833722246353, pi = 4015334.888985, error = 4.02e+06, time = 0.1196 s
 done
