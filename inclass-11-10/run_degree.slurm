@@ -11,7 +11,7 @@
 #SBATCH --time=00:10:00
 #SBATCH --output=degree-%j.out
 
-PROG=degree
+PROG=degree_cpp
 
 set -u
 echo "node: $(hostname)   date: $(date)"
