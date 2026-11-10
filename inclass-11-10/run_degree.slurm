@@ -15,7 +15,7 @@ PROG=degree_cpp
 
 set -u
 echo "node: $(hostname)   date: $(date)"
-make $PROG || exit 1
+# make $PROG || exit 1
 
 echo
 ./$PROG 1
