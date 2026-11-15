@@ -1,6 +1,6 @@
 CXX = g++
 OPT ?= -O3
-CXXFLAGS = -std=c++17 -Isrc -MMD -MP
+CXXFLAGS = -std=c++17 -fopenmp -Isrc -MMD -MP
  
 empty :=
 space := $(empty) $(empty)
