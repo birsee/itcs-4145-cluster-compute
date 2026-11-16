@@ -1,10 +1,9 @@
 CXX = g++
-OPT ?= -O3
-CXXFLAGS = -std=c++17 -fopenmp -Isrc -MMD -MP
+OPT ?= -O2
+CXXFLAGS = -std=c++17 -fopenmp -pthread -Isrc -MMD -MP
  
 empty :=
 space := $(empty) $(empty)
-OPT_TAG = $(subst =,_,$(subst $(space),_,$(subst -,,$(OPT))))
  
 ifeq ($(OS),Windows_NT)
     FIX_PATH = $(subst /,\,$1)
@@ -20,11 +19,10 @@ else
     EXT =
 endif
  
-# each optimization level gets its own stuff
-TARGET = main_$(OPT_TAG)$(EXT)
+TARGET = main$(EXT)
 SRC_DIR = src
 OBJ_ROOT = obj
-OBJ_DIR = $(OBJ_ROOT)/$(OPT_TAG)
+OBJ_DIR = $(OBJ_ROOT)
  
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
  
@@ -42,10 +40,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
  
 -include $(OBJS:.o=.d)
  
-LEVELS = O0 O1 O2 O3
-all-levels: $(addprefix build-,$(LEVELS))
 build-%:
-	@$(MAKE) --no-print-directory OPT=-$*
+	@$(MAKE) --no-print-directory
  
 clean:
 	-@$(call RMDIR,$(OBJ_ROOT))
