@@ -11,7 +11,7 @@
 #SBATCH --mem=128G
 
 export OMP_PROC_BIND=true
-export OMP_PLACES=true
+export OMP_PLACES=cores
 
 set -e
 
