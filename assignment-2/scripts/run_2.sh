@@ -18,7 +18,7 @@ set -e
 ROOT_DIR="$SLURM_SUBMIT_DIR/assignment-2"
 RESULTS="$ROOT_DIR/data"
 EXEC="$ROOT_DIR/main"
-BEST_B=16 # todo
+BEST_B=64
 
 cd "$ROOT_DIR"
 mkdir -p "$RESULTS"
