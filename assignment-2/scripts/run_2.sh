@@ -57,9 +57,11 @@ do
             done
             pc=$((p / pr))
 
+            echo "b = $BEST_B, size = $sz, pr = $pr, pc = $pc"
             path="$RESULTS/$type-block-b$BEST_B-$sz-pr$pr-pc$pc.csv"
             rm -f "$path"
             $EXEC "$path" $type-block $sz $sz $sz 0 $BEST_B $pr $pc
+            echo "finished!"
         done
     done
 
